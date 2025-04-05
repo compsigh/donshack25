@@ -14,8 +14,16 @@ import {
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { getAllCourses } from "@/functions/db/course";
+import CourseFilters from "@/components/ui/courseFilter";
+import { getAllSubjects } from "@/functions/db/subject";
+import { getAllProfessors } from "@/functions/db/professor";
 
 export default function App() {
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [professors, setProfessors] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
   const nodeWidth = 172;
@@ -112,6 +120,15 @@ export default function App() {
     const layout = getLayoutedElements(courseNodes, courseEdges) as any;
     setNodes(layout.nodes);
     setEdges(layout.edges);
+
+
+    const subjects = await getAllSubjects();
+    setSubjects(subjects.map((subject) => `(${subject.code} - ${subject.name})`));
+
+    const professors = await getAllProfessors();
+    setProfessors(
+      professors.map((prof) => `${prof.firstName} ${prof.lastName}`)
+    );
   };
 
   useEffect(() => {
@@ -122,9 +139,14 @@ export default function App() {
     <div className="w-full h-screen">
       <ReactFlowProvider>
         <Panel position="top-right">
-          <h2 className="text-black">
-            HELLO WORLD
-          </h2>
+          <CourseFilters
+            subjects={subjects}
+            professors={professors}
+            selectedSubjects={selectedSubjects}
+            setSelectedSubjects={setSelectedSubjects}
+            selectedProfessors={selectedProfessors}
+            setSelectedProfessors={setSelectedProfessors}
+          />
         </Panel>
 
         <ReactFlow
