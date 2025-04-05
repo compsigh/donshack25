@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,14 +8,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. Course description, Instructor, Co-Recs, Pre-Reecs
+model Course {
+  id            Int                  @id @default(autoincrement())
+  name          String
+  description   String
+  credits       Int
+  subject       Subject             @relation(fields: [subjectId], references: [id])
+  subjectId     Int
+  professorId   Int
+  prerequisites CoursePrereq[]    @relation("CourseToPrereq")
+  isPrerequisiteFor CoursePrereq[] @relation("PrereqToCourse")
+  professor     Professor           @relation(fields: [professorId], references: [id])
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
 
-// Course
-// *prequisites field
+model CoursePrereq {
+  id            Int      @id @default(autoincrement())
+  courseId      Int
+  prerequisiteId Int
 
-// * everything
+  course         Course  @relation("CourseToPrereq", fields: [courseId], references: [id])
+  prerequisite   Course  @relation("PrereqToCourse", fields: [prerequisiteId], references: [id])
 
-// * Subject
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
 
-// *Professor
+model Professor {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
+model Subject {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  courses     Course[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
