@@ -47,8 +47,11 @@ async def send_db_data(url, generator_func):
 @app.get("/seed")
 async def to_db():
     tasks = [
-        asyncio.to_thread(send_db_data, f"{API_URL_BASE}/{endpoint}", gen_func)
+        asyncio.create_task(
+            send_db_data(f"{API_URL_BASE}/{endpoint}", gen_func)
+        )
         for endpoint, gen_func in generators
     ]
+    await asyncio.gather(*tasks)
     await asyncio.gather(*tasks)
     return {"status": "done and dusted"}
