@@ -31,7 +31,7 @@ export default function Canvas() {
 
   return (
     <>
-      <div style={{ width: "100vw", height: "100vh" }}>
+      <div style={{ width: "100vw", height: "100vh", color: "black" }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}

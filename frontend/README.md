@@ -2,6 +2,8 @@
 
 This API provides endpoints to manage courses, professors, and subjects in an academic system.
 
+**Note:** If you are not running the next server locallly, then replace `http://localhost:3000` with `https://donshack25.vercel.app`
+
 ## Endpoints
 
 ### Subjects
@@ -51,6 +53,21 @@ curl -X POST http://localhost:3000/api/courses \
     "credits": 3,
     "subjectId": 1,
     "professorId": 1,
+    "courseAIds": [],
+    "courseBIds": []
+  }'
+```
+
+#### Update a Course
+```bash
+curl -X PATCH http://localhost:3000/api/courses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 1,
+    "name": "Advanced Programming",
+    "credits": 4,
+    "courseAIds": [2, 3],
+    "courseBIds": []
   }'
 ```
 
