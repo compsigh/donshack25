@@ -9,7 +9,7 @@ from test import *
 # fastapi run
 app = FastAPI(docs_url=None, redoc_url=None)
 
-API_URL_BASE = "https://donshack25.vercel.app/api"
+API_URL_BASE = "http://localhost:3000/api"
 HEADERS = {"Content-Type": "application/json"}
 
 generators = [
