@@ -13,3 +13,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// 1. Course description, Instructor, Co-Recs, Pre-Reecs
+
+// Course
+// *prequisites field
+
+// * everything
+
+// * Subject
+
+// *Professor
+
