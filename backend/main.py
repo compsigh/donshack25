@@ -1,14 +1,22 @@
+import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import requests
+import asyncio
+
+from test import *
 
 # fastapi dev
 # fastapi run
 app = FastAPI(docs_url=None, redoc_url=None)
 
-API_URL_BASE = "https://donshack25.vercel.app/api/"
-ENDPOINTS = ["subjects", "professors", "courses"]
+API_URL_BASE = "https://donshack25.vercel.app/api"
 HEADERS = {"Content-Type": "application/json"}
+
+generators = [
+    ("subjects", subject_generator),
+    ("professors", professor_generator),
+    ("courses", course_generator),
+]
 
 origins = [
     "*"
@@ -26,26 +34,21 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-def post_subjects(send_to):
-    pass
+async def send_db_data(url, generator_func):
+    async with httpx.AsyncClient() as client:
+        for payload in generator_func():
+            try:
+                res = await client.post(url, headers=HEADERS, json=payload)
+                print(f"Sent to {url}: {res.status_code}")
+                res.raise_for_status()
+            except httpx.RequestError as e:
+                print(f"Failed to send to {url}: {e}")
 
-def post_profs(send_to):
-    pass
-
-def post_courses(send_to):
-    pass
-
-@app.post("/seed")
+@app.get("/seed")
 async def to_db():
-    # call jet's get_data()
-    # send to db
-    for endpoint in ENDPOINTS:
-        send_to = f"{API_URL_BASE}{endpoint}"
-        if endpoint == "subjects":
-            post_subjects(send_to)
-        if endpoint == "professors":
-            post_profs(send_to)
-        if endpoint == "courses":
-            post_courses(send_to)
-
-    pass
+    tasks = [
+        asyncio.to_thread(send_db_data, f"{API_URL_BASE}/{endpoint}", gen_func)
+        for endpoint, gen_func in generators
+    ]
+    await asyncio.gather(*tasks)
+    return {"status": "done and dusted"}
