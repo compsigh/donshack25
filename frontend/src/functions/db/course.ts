@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "@/functions/db"
 import { Course } from "@prisma/client"
 
