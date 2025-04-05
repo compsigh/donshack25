@@ -1,13 +1,7 @@
 import httpx
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 
 from test import *
-
-# fastapi dev
-# fastapi run
-app = FastAPI(docs_url=None, redoc_url=None)
 
 API_URL_BASE = "https://donshack25.vercel.app/api"
 HEADERS = {"Content-Type": "application/json"}
@@ -17,22 +11,6 @@ generators = [
     ("professors", professor_generator),
     ("courses", course_generator),
 ]
-
-origins = [
-    "*"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 async def send_db_data(url, generator_func):
     async with httpx.AsyncClient() as client:
@@ -44,7 +22,6 @@ async def send_db_data(url, generator_func):
             except httpx.RequestError as e:
                 print(f"Failed to send to {url}: {e}")
 
-@app.get("/seed")
 async def to_db():
     tasks = [
         asyncio.create_task(
@@ -53,4 +30,6 @@ async def to_db():
         for endpoint, gen_func in generators
     ]
     await asyncio.gather(*tasks)
-    return {"status": "done and dusted"}
+
+if __name__ == "__main__":
+    asyncio.run(to_db())
