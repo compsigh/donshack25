@@ -1,7 +1,7 @@
 "use server";
 
-import { Course } from '../../../generated/prisma';
-import prisma from '.';
+import prisma from '@/functions/db';
+import { Course } from '@prisma/client';
 
 export async function postCourse(
   name: string,
