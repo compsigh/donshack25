@@ -23,7 +23,8 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
-      courseAIds,
+      prerequisiteIds,
+      prerequisiteOfIds, 
       courseBIds,
     } = await request.json()
 
@@ -49,8 +50,8 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
-      courseAIds,
-      courseBIds,
+      prerequisiteIds,
+      prerequisiteOfIds,
     )
     return NextResponse.json(course)
   }
@@ -73,8 +74,8 @@ export async function PATCH(request: Request) {
       credits, 
       subjectId, 
       professorId, 
-      courseAIds,
-      courseBIds
+      prerequisiteIds,
+      prerequisiteOfIds,
     } = await request.json();
 
     if (!id) {
@@ -88,8 +89,8 @@ export async function PATCH(request: Request) {
       credits,
       subjectId,
       professorId,
-      courseAIds,
-      courseBIds
+      prerequisiteIds,
+      prerequisiteOfIds,
     );
     
     return NextResponse.json(updatedCourse);

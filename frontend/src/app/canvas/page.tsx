@@ -47,9 +47,9 @@ export default function Canvas() {
       }
     }));
 
-    // Create edges from Prerequisite relationships
+    // Create edges from prerequisite relationships
     const courseEdges = courses.flatMap(course => 
-      course.Prerequisite.map(relatedCourse => ({
+      course.prerequisite.map(relatedCourse => ({
         id: `e${course.id}-${relatedCourse.id}`,
         source: course.id.toString(),
         target: relatedCourse.id.toString(),

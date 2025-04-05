@@ -8,22 +8,22 @@ export async function getAllCourses() {
     include: {
       subject: true,
       professor: true,
-      Prerequisite: true,
-      PrerequisiteOf: true,
+      prerequisite: true,
+      prerequisiteOf: true,
     },
   });
   return courses;
 }
 
-// TODO: Add support for Prerequisite and PrerequisiteOf
+// TODO: Add support for prerequisite and prerequisiteOf
 export async function createCourse(
   name: string,
   description: string,
   credits: number,
   subjectId: number,
   professorId: number,
-  courseAIds: number[],
-  courseBIds: number[]
+  prerequisiteIds: number[],
+  prerequisiteForIds: number[]
 ): Promise<Course> {
   const course = await prisma.course.create({
     data: {
@@ -40,17 +40,17 @@ export async function createCourse(
           id: professorId,
         },
       },
-      ...(courseAIds?.length
+      ...(prerequisiteIds?.length
         ? {
-            Prerequisite: {
-              connect: courseAIds.map((id) => ({ id })),
+            prerequisite: {
+              connect: prerequisiteIds.map((id) => ({ id })),
             },
           }
         : {}),
-      ...(courseBIds?.length
+      ...(prerequisiteForIds?.length
         ? {
-            PrerequisiteOf: {
-              connect: courseBIds.map((id) => ({ id })),
+            prerequisiteOf: {
+              connect: prerequisiteForIds.map((id) => ({ id })),
             },
           }
         : {}),
@@ -58,8 +58,8 @@ export async function createCourse(
     include: {
       subject: true,
       professor: true,
-      Prerequisite: true,
-      PrerequisiteOf: true,
+      prerequisite: true,
+      prerequisiteOf: true,
     },
   });
   return course;
@@ -89,7 +89,7 @@ export async function updateCourse(
           : {}),
         ...(prerequisiteForIds
           ? {
-              PrerequisiteOf: {
+              prerequisiteOf: {
                 set: [],
               },
             }
@@ -116,7 +116,7 @@ export async function updateCourse(
         : {}),
       ...(prerequisiteForIds?.length
         ? {
-            PrerequisiteOf: {
+            prerequisiteOf: {
               connect: prerequisiteForIds.map((id) => ({ id })),
             },
           }
@@ -125,8 +125,8 @@ export async function updateCourse(
     include: {
       subject: true,
       professor: true,
-      Prerequisite: true,
-      PrerequisiteOf: true,
+      prerequisite: true,
+      prerequisiteOf: true,
     },
   });
 

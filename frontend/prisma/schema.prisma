@@ -18,8 +18,8 @@ model Course {
   updatedAt   DateTime  @updatedAt
   professor   Professor @relation(fields: [professorId], references: [id])
   subject     Subject   @relation(fields: [subjectId], references: [id])
-  Prerequisite   Course[]  @relation("CourseToCourse")
-  PrerequisiteOf Course[]  @relation("CourseToCourse")
+  prerequisite   Course[]  @relation("CourseToCourse")
+  prerequisiteOf Course[]  @relation("CourseToCourse")
 }
 
 model Professor {
