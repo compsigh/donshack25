@@ -5,9 +5,11 @@ import {
   Background,
   ReactFlow,
   addEdge,
+  Panel,
   ConnectionLineType,
   useNodesState,
   useEdgesState,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
@@ -118,18 +120,26 @@ export default function App() {
 
   return (
     <div className="w-full h-screen">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        connectionLineType={ConnectionLineType.SmoothStep}
-        fitView
-        style={{ backgroundColor: "#F7F9FB" }}
-      >
-        <Background />
-      </ReactFlow>
+      <ReactFlowProvider>
+        <Panel position="top-right">
+          <h2 className="text-black">
+            HELLO WORLD
+          </h2>
+        </Panel>
+
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          fitView
+          style={{ backgroundColor: "#F7F9FB" }}
+        >
+          <Background />
+        </ReactFlow>
+      </ReactFlowProvider>
     </div>
   );
 }
