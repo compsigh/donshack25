@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Course {
-  id                Int       @id @default(autoincrement())
-  name              String
-  description       String
-  credits           Int
-  subject           Subject   @relation(fields: [subjectId], references: [id])
-  subjectId         Int
-  professor         Professor @relation(fields: [professorId], references: [id])
-  professorId       Int
-  prerequisites     Course[]  @relation("CourseToCourse")
-  isPrerequisiteFor Course[]  @relation("CourseToCourse")
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  credits     Int
+  subjectId   Int
+  professorId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  professor   Professor @relation(fields: [professorId], references: [id])
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  Course_A    Course[]  @relation("CourseToCourse")
+  Course_B    Course[]  @relation("CourseToCourse")
 }
 
 model Professor {
@@ -27,16 +27,16 @@ model Professor {
   firstName String
   lastName  String
   email     String   @unique
-  courses   Course[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  courses   Course[]
 }
 
 model Subject {
   id        Int      @id @default(autoincrement())
   name      String
   code      String   @unique
-  courses   Course[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  courses   Course[]
 }

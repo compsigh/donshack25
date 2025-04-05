@@ -8,7 +8,7 @@ This API provides endpoints to manage courses, professors, and subjects in an ac
 
 #### Create a Subject
 ```bash
-curl -X POST http://localhost:3000/api/subject \
+curl -X POST http://localhost:3000/api/subjects \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Computer Science",
@@ -18,14 +18,14 @@ curl -X POST http://localhost:3000/api/subject \
 
 #### Get All Subjects
 ```bash
-curl http://localhost:3000/api/subject
+curl http://localhost:3000/api/subjects
 ```
 
 ### Professors
 
 #### Create a Professor
 ```bash
-curl -X POST http://localhost:3000/api/professor \
+curl -X POST http://localhost:3000/api/professors \
   -H "Content-Type: application/json" \
   -d '{
     "firstName": "John",
@@ -36,14 +36,14 @@ curl -X POST http://localhost:3000/api/professor \
 
 #### Get All Professors
 ```bash
-curl http://localhost:3000/api/professor
+curl http://localhost:3000/api/professors
 ```
 
 ### Courses
 
 #### Create a Course
 ```bash
-curl -X POST http://localhost:3000/api/course \
+curl -X POST http://localhost:3000/api/courses \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Introduction to Programming",
@@ -51,13 +51,12 @@ curl -X POST http://localhost:3000/api/course \
     "credits": 3,
     "subjectId": 1,
     "professorId": 1,
-    "prerequisiteIds": [2, 3]
   }'
 ```
 
 #### Get All Courses
 ```bash
-curl http://localhost:3000/api/course
+curl http://localhost:3000/api/courses
 ```
 
 ## Response Formats
@@ -98,73 +97,9 @@ curl http://localhost:3000/api/course
   "professorId": 1,
   "subject": {},
   "professor": {},
-  "prerequisites": [],
-  "isPrerequisiteFor": [],
   "createdAt": "2024-04-04T10:00:00.000Z",
-  "updatedAt": "2024-04-04T10:00:00.000Z"
+  "updatedAt": "2024-04-04T10:00:00.000Z",
+  "Course_A": [],
+  "Course_B": []
 }
-```
-
-## Error Responses
-
-All endpoints return error responses in the following format:
-
-```json
-{
-  "error": "Error message description"
-}
-```
-
-Common HTTP status codes:
-- 200: Success
-- 400: Bad Request (invalid input)
-- 409: Conflict (duplicate entry)
-- 500: Server Error
-
-## Testing with JavaScript
-
-### Using Fetch API
-```javascript
-// Create a new subject
-const createSubject = async () => {
-  const response = await fetch('http://localhost:3000/api/subject', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: 'Computer Science',
-      code: 'CS101'
-    })
-  });
-  const data = await response.json();
-  console.log(data);
-};
-
-// Get all professors
-const getProfessors = async () => {
-  const response = await fetch('http://localhost:3000/api/professor');
-  const data = await response.json();
-  console.log(data);
-};
-
-// Create a new course
-const createCourse = async () => {
-  const response = await fetch('http://localhost:3000/api/course', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: 'Advanced Programming',
-      description: 'Deep dive into programming concepts',
-      credits: 3,
-      subjectId: 1,
-      professorId: 1,
-      prerequisiteIds: [1]
-    })
-  });
-  const data = await response.json();
-  console.log(data);
-};
 ```

@@ -20,7 +20,7 @@ export async function createSubject(
     data: {
       name,
       code
-    }
+    }, 
   })
   return subject
 }
