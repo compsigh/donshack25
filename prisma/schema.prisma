@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,14 +14,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. Course description, Instructor, Co-Recs, Pre-Reecs
+model Course {
+  id            Int                  @id @default(autoincrement())
+  name          String
+  description   String
+  credits       Int
+  subject       Subject             @relation(fields: [subjectId], references: [id])
+  subjectId     Int
+  professorId   Int
+  professor     Professor           @relation(fields: [professorId], references: [id])
+  prerequisites CoursePrerequisites[] @relation("PrerequisiteTo")
+  requiredFor   CoursePrerequisites[] @relation("RequiredFor")
+  coRequisites  Course[]            @relation("CoRequisites")
+  coRequisiteFor Course[]           @relation("CoRequisites")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
 
-// Course
-// *prequisites field
+model CoursePrerequisites {
+  id              Int      @id @default(autoincrement())
+  courseId        Int
+  prerequisiteId  Int
+  course          Course   @relation("RequiredFor", fields: [courseId], references: [id])
+  prerequisite    Course   @relation("PrerequisiteTo", fields: [prerequisiteId], references: [id])
+}
 
-// * everything
+model Professor {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-// * Subject
-
-// *Professor
-
+model Subject {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  courses     Course[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
