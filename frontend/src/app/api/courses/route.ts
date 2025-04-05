@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createCourse, getAllCourses } from "@/functions/db/course"
+import { createCourse, getAllCourses, updateCourse } from "@/functions/db/course"
 
 export async function GET() {
   try {
@@ -23,6 +23,9 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
+      prerequisiteIds,
+      prerequisiteOfIds, 
+      courseBIds,
     } = await request.json()
 
     if (!name?.trim()) {
@@ -47,6 +50,8 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
+      prerequisiteIds,
+      prerequisiteOfIds,
     )
     return NextResponse.json(course)
   }
@@ -57,5 +62,43 @@ export async function POST(request: Request) {
       { error: "Failed to create course" },
       { status: 500 }
     )
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const { 
+      id,
+      name, 
+      description, 
+      credits, 
+      subjectId, 
+      professorId, 
+      prerequisiteIds,
+      prerequisiteOfIds,
+    } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
+    }
+
+    const updatedCourse = await updateCourse(
+      id,
+      name,
+      description,
+      credits,
+      subjectId,
+      professorId,
+      prerequisiteIds,
+      prerequisiteOfIds,
+    );
+    
+    return NextResponse.json(updatedCourse);
+  } catch (error) {
+    console.error('Error updating course:', error);
+    return NextResponse.json(
+      { error: 'Failed to update course' }, 
+      { status: 500 }
+    );
   }
 }

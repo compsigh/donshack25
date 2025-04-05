@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const subject = createSubject(name, code)
+    const subject = await createSubject(name, code)
     return NextResponse.json(subject)
   }
 
