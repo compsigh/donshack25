@@ -28,3 +28,25 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  console.log("request", request);
+  try {
+    const subjects = await prisma.subject.findMany({
+      include: {
+        courses: true
+      },
+      orderBy: {
+        createdAt: 'desc',
+      }
+    });
+
+    return NextResponse.json(subjects);
+  } catch (error) {
+    console.error('Error fetching professors:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch professors' },
+      { status: 500 }
+    );
+  }
+}
