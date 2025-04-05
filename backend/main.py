@@ -53,5 +53,4 @@ async def to_db():
         for endpoint, gen_func in generators
     ]
     await asyncio.gather(*tasks)
-    await asyncio.gather(*tasks)
     return {"status": "done and dusted"}
