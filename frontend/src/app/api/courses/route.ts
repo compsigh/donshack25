@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { createCourse, getAllCourses } from "@/functions/db/course"
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const courses = await getAllCourses()
     return NextResponse.json(courses)

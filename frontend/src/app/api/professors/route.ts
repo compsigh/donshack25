@@ -2,7 +2,7 @@ import prisma from "@/functions/db"
 import { NextResponse } from "next/server"
 import { createProfessor, getAllProfessors } from "@/functions/db/professor"
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const professors = await getAllProfessors()
     return NextResponse.json(professors)

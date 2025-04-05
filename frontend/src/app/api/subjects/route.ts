@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { createSubject, getAllSubjects } from "@/functions/db/subject"
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const subjects = await getAllSubjects()
     return NextResponse.json(subjects)
