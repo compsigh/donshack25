@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -22,21 +16,23 @@ model Course {
   subject       Subject             @relation(fields: [subjectId], references: [id])
   subjectId     Int
   professorId   Int
+  prerequisites CoursePrereq[]    @relation("CourseToPrereq")
+  isPrerequisiteFor CoursePrereq[] @relation("PrereqToCourse")
   professor     Professor           @relation(fields: [professorId], references: [id])
-  prerequisites CoursePrerequisites[] @relation("PrerequisiteTo")
-  requiredFor   CoursePrerequisites[] @relation("RequiredFor")
-  coRequisites  Course[]            @relation("CoRequisites")
-  coRequisiteFor Course[]           @relation("CoRequisites")
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
 }
 
-model CoursePrerequisites {
-  id              Int      @id @default(autoincrement())
-  courseId        Int
-  prerequisiteId  Int
-  course          Course   @relation("RequiredFor", fields: [courseId], references: [id])
-  prerequisite    Course   @relation("PrerequisiteTo", fields: [prerequisiteId], references: [id])
+model CoursePrereq {
+  id            Int      @id @default(autoincrement())
+  courseId      Int
+  prerequisiteId Int
+
+  course         Course  @relation("CourseToPrereq", fields: [courseId], references: [id])
+  prerequisite   Course  @relation("PrereqToCourse", fields: [prerequisiteId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Professor {
