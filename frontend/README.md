@@ -53,8 +53,8 @@ curl -X POST http://localhost:3000/api/courses \
     "credits": 3,
     "subjectId": 1,
     "professorId": 1,
-    "courseAIds": [],
-    "courseBIds": []
+    "prerequisiteIds": [],
+    "prerequisiteForIds": []
   }'
 ```
 
@@ -66,8 +66,8 @@ curl -X PATCH http://localhost:3000/api/courses \
     "id": 1,
     "name": "Advanced Programming",
     "credits": 4,
-    "courseAIds": [2, 3],
-    "courseBIds": []
+    "prerequisiteIds": [2, 3],
+    "prerequisiteForIds": []
   }'
 ```
 
@@ -116,7 +116,7 @@ curl http://localhost:3000/api/courses
   "professor": {},
   "createdAt": "2024-04-04T10:00:00.000Z",
   "updatedAt": "2024-04-04T10:00:00.000Z",
-  "": [],
-  "Course_B": []
+  "prerequisite": [],
+  "prerequisiteFor": []
 }
 ```
