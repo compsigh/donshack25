@@ -3,80 +3,103 @@ import prisma from '@/functions/db';
 
 export async function POST(request: Request) {
   try {
-    const { firstName, lastName, email } = await request.json();
+    const { 
+      name, 
+      description, 
+      credits, 
+      subjectId, 
+      professorId, 
+      prerequisiteIds 
+    } = await request.json();
 
     // Basic validation
-    if (!firstName?.trim()) {
-      return NextResponse.json(
-        { error: 'First name is required' },
-        { status: 400 }
-      );
+    if (!name?.trim()) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    }
+    
+    if (!description?.trim()) {
+      return NextResponse.json({ error: 'Description is required' }, { status: 400 });
     }
 
-    if (!lastName?.trim()) {
-      return NextResponse.json(
-        { error: 'Last name is required' },
-        { status: 400 }
-      );
+    if (typeof credits !== 'number' || credits < 0) {
+      return NextResponse.json({ error: 'Valid credits number is required' }, { status: 400 });
     }
 
-    if (!email?.trim() || !email.includes('@')) {
-      return NextResponse.json(
-        { error: 'Valid email is required' },
-        { status: 400 }
-      );
+    if (!subjectId) {
+      return NextResponse.json({ error: 'Subject ID is required' }, { status: 400 });
     }
 
-    // Check for existing professor
-    const existingProfessor = await prisma.professor.findUnique({
-      where: { email }
-    });
-
-    if (existingProfessor) {
-      return NextResponse.json(
-        { error: 'Professor with this email already exists' },
-        { status: 409 }
-      );
+    if (!professorId) {
+      return NextResponse.json({ error: 'Professor ID is required' }, { status: 400 });
     }
 
-    // Create professor
-    const professor = await prisma.professor.create({
+    // Create course with prerequisites if provided
+    const course = await prisma.course.create({
       data: {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        email: email.trim()
+        name: name.trim(),
+        description: description.trim(),
+        credits,
+        subjectId,
+        professorId,
+        ...(prerequisiteIds?.length ? {
+          prerequisites: {
+            create: prerequisiteIds.map((prereqId: string) => ({
+              prerequisiteId: prereqId,
+            }))
+          }
+        } : {})
       },
       include: {
-        courses: true
+        subject: true,
+        professor: true,
+        prerequisites: {
+          include: {
+            prerequisite: true
+          }
+        },
+        isPrerequisiteFor: {
+          include: {
+            course: true
+          }
+        }
       }
     });
 
-    return NextResponse.json(professor);
+    return NextResponse.json(course);
   } catch (error) {
-    console.error('Error creating professor:', error);
+    console.error('Error creating course:', error);
     return NextResponse.json(
-      { error: 'Failed to create professor' },
+      { error: 'Failed to create course' }, 
       { status: 500 }
     );
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  console.log("request", request);
   try {
-    const professors = await prisma.professor.findMany({
+    const courses = await prisma.course.findMany({
       include: {
-        courses: true
-      },
-      orderBy: {
-        lastName: 'asc'
+        subject: true,
+        professor: true,
+        prerequisites: {
+          include: {
+            prerequisite: true
+          }
+        },
+        isPrerequisiteFor: {
+          include: {
+            course: true
+          }
+        }
       }
     });
 
-    return NextResponse.json(professors);
+    return NextResponse.json(courses);
   } catch (error) {
-    console.error('Error fetching professors:', error);
+    console.error('Error fetching courses:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch professors' },
+      { error: 'Failed to fetch courses' },
       { status: 500 }
     );
   }

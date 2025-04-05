@@ -61,7 +61,8 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  console.log("request", request);
   try {
     const professors = await prisma.professor.findMany({
       include: {
