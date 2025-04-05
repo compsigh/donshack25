@@ -1,7 +1,7 @@
-"use server";
+"use server"
 
-import prisma from '@/functions/db';
-import { Course } from '@prisma/client';
+import prisma from "@/functions/db"
+import { Course } from "@prisma/client"
 
 export async function postCourse(
   name: string,
@@ -33,6 +33,6 @@ export async function postCourse(
         }
       }
     }
-  });
-  return course;
+  })
+  return course
 }

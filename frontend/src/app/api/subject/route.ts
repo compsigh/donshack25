@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/functions/db';
+import { NextResponse } from "next/server"
+import prisma from "@/functions/db"
 
 export async function POST(request: Request) {
   try {
-    const { name, code } = await request.json();
+    const { name, code } = await request.json()
 
     if (!name || !code) {
       return NextResponse.json(
-        { error: 'Name and code are required' },
+        { error: "Name and code are required" },
         { status: 400 }
-      );
+      )
     }
 
     const subject = await prisma.subject.create({
@@ -17,36 +17,36 @@ export async function POST(request: Request) {
         name,
         code,
       },
-    });
+    })
 
-    return NextResponse.json(subject);
+    return NextResponse.json(subject)
   } catch (error) {
-    console.error('Error creating subject:', error);
+    console.error("Error creating subject:", error)
     return NextResponse.json(
-      { error: 'Failed to create subject' },
+      { error: "Failed to create subject" },
       { status: 500 }
-    );
+    )
   }
 }
 
 export async function GET(request: Request) {
-  console.log("request", request);
+  console.log("request", request)
   try {
     const subjects = await prisma.subject.findMany({
       include: {
         courses: true
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       }
-    });
+    })
 
-    return NextResponse.json(subjects);
+    return NextResponse.json(subjects)
   } catch (error) {
-    console.error('Error fetching professors:', error);
+    console.error("Error fetching professors:", error)
     return NextResponse.json(
-      { error: 'Failed to fetch professors' },
+      { error: "Failed to fetch professors" },
       { status: 500 }
-    );
+    )
   }
 }
