@@ -8,16 +8,16 @@ datasource db {
 }
 
 model Course {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String
-  credits     Int
-  subjectId   Int
-  professorId Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  professor   Professor @relation(fields: [professorId], references: [id])
-  subject     Subject   @relation(fields: [subjectId], references: [id])
+  id             Int       @id @default(autoincrement())
+  name           String
+  description    String
+  credits        Int
+  subjectId      Int
+  professorId    Int
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  professor      Professor @relation(fields: [professorId], references: [id])
+  subject        Subject   @relation(fields: [subjectId], references: [id])
   prerequisite   Course[]  @relation("CourseToCourse")
   prerequisiteOf Course[]  @relation("CourseToCourse")
 }

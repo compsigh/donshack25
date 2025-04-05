@@ -1,6 +1,5 @@
-"use client";
+"use client"
 
-import React, { useCallback, useEffect, useState } from "react";
 import {
   Background,
   ReactFlow,
@@ -8,10 +7,11 @@ import {
   ConnectionLineType,
   useNodesState,
   useEdgesState,
-} from "@xyflow/react";
-import dagre from "@dagrejs/dagre";
-import "@xyflow/react/dist/style.css";
-import { getAllCourses } from "@/functions/db/course";
+} from "@xyflow/react"
+import dagre from "@dagrejs/dagre"
+import "@xyflow/react/dist/style.css"
+import { useCallback, useEffect } from "react"
+import { getAllCourses } from "@/functions/db/course"
 
 export default function App() {
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -58,7 +58,7 @@ export default function App() {
 
     return { nodes: newNodes, edges };
   };
-  
+
   // Set initial state
   const layoutedElements = getLayoutedElements([], []) || {
     nodes: [],
