@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.4",
     "@prisma/client": "^6.5.0",
     "@xyflow/react": "^12.5.4",
     "next": "15.2.4",
