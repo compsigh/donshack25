@@ -15,8 +15,6 @@ import { getAllCourses } from "@/functions/db/course";
 
 export default function App() {
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  const [initialNodes, setInitialNodes] = useState();
-  const [initialEdges, setInitialEdges] = useState();
 
   const nodeWidth = 172;
   const nodeHeight = 36;
@@ -60,8 +58,9 @@ export default function App() {
 
     return { nodes: newNodes, edges };
   };
-
-  const layoutedElements = getLayoutedElements(initialNodes, initialEdges) || {
+  
+  // Set initial state
+  const layoutedElements = getLayoutedElements([], []) || {
     nodes: [],
     edges: [],
   };
