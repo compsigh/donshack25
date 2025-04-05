@@ -43,10 +43,7 @@ export async function POST(request: Request) {
       where: { email }
     })
     if (existingProfessor) {
-      return NextResponse.json(
-        { error: "Professor with this email already exists" },
-        { status: 409 }
-      )
+      return NextResponse.json(existingProfessor);
     }
 
     const professor = await createProfessor(

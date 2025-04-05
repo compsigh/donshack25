@@ -15,8 +15,7 @@ export async function getAllCourses() {
   return courses;
 }
 
-// TODO: Add support for prerequisite and prerequisiteOf
-export async function createCourse(
+export async function createOrGetExistingCourse(
   name: string,
   description: string,
   credits: number,
@@ -25,6 +24,32 @@ export async function createCourse(
   prerequisiteIds: number[],
   prerequisiteForIds: number[]
 ): Promise<Course> {
+  const existingCourse = await prisma.course.findFirst({
+    where: {
+      name,
+      description,
+      credits,
+      subjectId,
+      professorId,
+    },
+    include: {
+      subject: true,
+      professor: true,
+      prerequisite: true,
+      prerequisiteOf: true,
+    }
+  });
+
+  // If it exists already.... return it
+  if (existingCourse?.name === name && 
+    existingCourse.description === description &&
+    existingCourse.credits === credits &&
+    existingCourse.subjectId === subjectId &&
+    existingCourse.professorId === professorId) 
+  {
+    return existingCourse;
+  }
+
   const course = await prisma.course.create({
     data: {
       name: name.trim(),

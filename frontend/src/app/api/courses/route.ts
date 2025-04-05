@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createCourse, getAllCourses, updateCourse } from "@/functions/db/course"
+import { createOrGetExistingCourse, getAllCourses, updateCourse } from "@/functions/db/course"
 
 export async function GET() {
   try {
@@ -24,8 +24,7 @@ export async function POST(request: Request) {
       subjectId,
       professorId,
       prerequisiteIds,
-      prerequisiteOfIds, 
-      courseBIds,
+      prerequisiteOfIds,
     } = await request.json()
 
     if (!name?.trim()) {
@@ -42,9 +41,9 @@ export async function POST(request: Request) {
     }
     if (!professorId) {
       return NextResponse.json({ error: "Professor ID is required" }, { status: 400 })
-    }
+    } 
 
-    const course = await createCourse(
+    const course = await createOrGetExistingCourse(
       name.trim(),
       description.trim(),
       credits,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createSubject, getAllSubjects } from "@/functions/db/subject"
+import { createOrGetExistingSubject, getAllSubjects } from "@/functions/db/subject"
 
 export async function GET() {
   try {
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const subject = await createSubject(name, code)
+    const subject = await createOrGetExistingSubject(name, code)
     return NextResponse.json(subject)
   }
 
