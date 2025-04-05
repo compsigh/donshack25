@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Course } from "../../../generated/prisma";
 import { getAllCourses } from "@/functions/db/queries";
@@ -12,9 +14,11 @@ export default function QueryPage() {
     try {
       const response = await getAllCourses();
       setCourses(response);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching courses:", error);
       setError("Failed to load courses");
+      setLoading(false);
     }
   };
 
