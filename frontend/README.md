@@ -116,7 +116,7 @@ curl http://localhost:3000/api/courses
   "professor": {},
   "createdAt": "2024-04-04T10:00:00.000Z",
   "updatedAt": "2024-04-04T10:00:00.000Z",
-  "Course_A": [],
+  "": [],
   "Course_B": []
 }
 ```

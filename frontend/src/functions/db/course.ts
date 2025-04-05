@@ -1,21 +1,21 @@
 "use server";
 
-import prisma from "@/functions/db"
-import { Course } from "@prisma/client"
+import prisma from "@/functions/db";
+import { Course } from "@prisma/client";
 
 export async function getAllCourses() {
   const courses = await prisma.course.findMany({
     include: {
       subject: true,
       professor: true,
-      Course_A: true,
-      Course_B: true,
-    }
-  })
-  return courses
+      Prerequisite: true,
+      PrerequisiteOf: true,
+    },
+  });
+  return courses;
 }
 
-// TODO: Add support for Course_A and Course_B
+// TODO: Add support for Prerequisite and PrerequisiteOf
 export async function createCourse(
   name: string,
   description: string,
@@ -23,7 +23,7 @@ export async function createCourse(
   subjectId: number,
   professorId: number,
   courseAIds: number[],
-  courseBIds: number[],
+  courseBIds: number[]
 ): Promise<Course> {
   const course = await prisma.course.create({
     data: {
@@ -32,33 +32,37 @@ export async function createCourse(
       credits,
       subject: {
         connect: {
-          id: subjectId
-        }
+          id: subjectId,
+        },
       },
       professor: {
         connect: {
-          id: professorId
-        }
+          id: professorId,
+        },
       },
-      ...(courseAIds?.length ? {
-        Course_A: {
-          connect: courseAIds.map(id => ({ id }))
-        }
-      } : {}),
-      ...(courseBIds?.length ? {
-        Course_B: {
-          connect: courseBIds.map(id => ({ id }))
-        }
-      } : {})
+      ...(courseAIds?.length
+        ? {
+            Prerequisite: {
+              connect: courseAIds.map((id) => ({ id })),
+            },
+          }
+        : {}),
+      ...(courseBIds?.length
+        ? {
+            PrerequisiteOf: {
+              connect: courseBIds.map((id) => ({ id })),
+            },
+          }
+        : {}),
     },
     include: {
       subject: true,
       professor: true,
-      Course_A: true,
-      Course_B: true,
-    }
-  })
-  return course
+      Prerequisite: true,
+      PrerequisiteOf: true,
+    },
+  });
+  return course;
 }
 
 export async function updateCourse(
@@ -68,25 +72,29 @@ export async function updateCourse(
   credits: number,
   subjectId: number,
   professorId: number,
-  courseAIds: number[],
-  courseBIds: number[],
+  prerequisiteIds: number[],
+  prerequisiteForIds: number[],
 ): Promise<Course> {
   // First disconnect existing relationships if new IDs are provided
-  if (courseAIds || courseBIds) {
+  if (prerequisiteIds || prerequisiteForIds) {
     await prisma.course.update({
       where: { id },
       data: {
-        ...(courseAIds ? {
-          Course_A: {
-            set: [] // Clear existing Course_A relationships
-          }
-        } : {}),
-        ...(courseBIds ? {
-          Course_B: {
-            set: [] // Clear existing Course_B relationships
-          }
-        } : {})
-      }
+        ...(prerequisiteIds
+          ? {
+              Prerequisites: {
+                set: [],
+              },
+            }
+          : {}),
+        ...(prerequisiteForIds
+          ? {
+              PrerequisiteOf: {
+                set: [],
+              },
+            }
+          : {}),
+      },
     });
   }
 
@@ -99,24 +107,28 @@ export async function updateCourse(
       ...(credits && { credits }),
       ...(subjectId && { subjectId }),
       ...(professorId && { professorId }),
-      ...(courseAIds?.length ? {
-        Course_A: {
-          connect: courseAIds.map(id => ({ id }))
-        }
-      } : {}),
-      ...(courseBIds?.length ? {
-        Course_B: {
-          connect: courseBIds.map(id => ({ id }))
-        }
-      } : {})
+      ...(prerequisiteIds?.length
+        ? {
+            Prerequisites: {
+              connect: prerequisiteIds.map((id) => ({ id })),
+            },
+          }
+        : {}),
+      ...(prerequisiteForIds?.length
+        ? {
+            PrerequisiteOf: {
+              connect: prerequisiteForIds.map((id) => ({ id })),
+            },
+          }
+        : {}),
     },
     include: {
       subject: true,
       professor: true,
-      Course_A: true,
-      Course_B: true
-    }
+      Prerequisite: true,
+      PrerequisiteOf: true,
+    },
   });
 
-  return updatedCourse
+  return updatedCourse;
 }
