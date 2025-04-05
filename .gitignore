@@ -1,7 +1,21 @@
-node_modules
-.env
-.idea
-.env*.local
-.vercel
-generated
-.next
+# Next.js
+.env*
+.next/
+.vercel/
+node_modules/
+next-env.d.ts
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Misc
+.idea/
+.DS_Store

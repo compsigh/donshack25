@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -9,30 +8,18 @@ datasource db {
 }
 
 model Course {
-  id            Int                  @id @default(autoincrement())
-  name          String
-  description   String
-  credits       Int
-  subject       Subject             @relation(fields: [subjectId], references: [id])
-  subjectId     Int
-  professorId   Int
-  prerequisites CoursePrereq[]    @relation("CourseToPrereq")
-  isPrerequisiteFor CoursePrereq[] @relation("PrereqToCourse")
-  professor     Professor           @relation(fields: [professorId], references: [id])
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-}
-
-model CoursePrereq {
-  id            Int      @id @default(autoincrement())
-  courseId      Int
-  prerequisiteId Int
-
-  course         Course  @relation("CourseToPrereq", fields: [courseId], references: [id])
-  prerequisite   Course  @relation("PrereqToCourse", fields: [prerequisiteId], references: [id])
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                Int       @id @default(autoincrement())
+  name              String
+  description       String
+  credits           Int
+  subject           Subject   @relation(fields: [subjectId], references: [id])
+  subjectId         Int
+  professor         Professor @relation(fields: [professorId], references: [id])
+  professorId       Int
+  prerequisites     Course[]  @relation("CourseToCourse")
+  isPrerequisiteFor Course[]  @relation("CourseToCourse")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model Professor {
@@ -46,10 +33,10 @@ model Professor {
 }
 
 model Subject {
-  id          Int      @id @default(autoincrement())
-  name        String
-  code        String   @unique
-  courses     Course[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

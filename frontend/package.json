@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "postinstall": "prisma generate",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@xyflow/react": "^12.5.4",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
