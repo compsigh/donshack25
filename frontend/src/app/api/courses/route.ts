@@ -23,7 +23,6 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
-      prerequisiteIds
     } = await request.json()
 
     if (!name?.trim()) {
@@ -48,7 +47,6 @@ export async function POST(request: Request) {
       credits,
       subjectId,
       professorId,
-      prerequisiteIds
     )
     return NextResponse.json(course)
   }

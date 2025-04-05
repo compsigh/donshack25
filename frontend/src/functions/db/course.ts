@@ -5,20 +5,20 @@ export async function getAllCourses() {
     include: {
       subject: true,
       professor: true,
-      prerequisites: true,
-      isPrerequisiteFor: true
+      Course_A: true,
+      Course_B: true,
     }
   })
   return courses
 }
 
+// TODO: Add support for Course_A and Course_B
 export async function createCourse(
   name: string,
   description: string,
   credits: number,
   subjectId: number,
   professorId: number,
-  prerequisiteIds?: number[]
 ) {
   const course = await prisma.course.create({
     data: {
@@ -35,15 +35,12 @@ export async function createCourse(
           id: professorId
         }
       },
-      prerequisites: {
-        connect: prerequisiteIds ? prerequisiteIds.map(id => ({ id })) : []
-      }
     },
     include: {
       subject: true,
       professor: true,
-      prerequisites: true,
-      isPrerequisiteFor: true
+      Course_A: true,
+      Course_B: true,
     }
   })
   return course
