@@ -167,11 +167,6 @@ export default function App() {
     loadCourseData();
   }, []);
 
-  useEffect(() => {
-    console.log("nodes: ", nodes);
-    console.log("nodes mapped: ", nodes.map((node) => node.data));
-  }, [nodes]);
-
   return (
     <div className="w-full h-screen">
       <ReactFlowProvider>

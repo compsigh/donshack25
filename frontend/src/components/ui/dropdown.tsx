@@ -39,8 +39,7 @@ const getOptionLabel = (
     return (option as Subject).name;
   } else if (type === "course") {
     return (option as any).label;
-  }
-  else {
+  } else {
     const prof = option as Professor;
     return prof.name;
   }
@@ -66,10 +65,6 @@ export function Dropdown(props: DropdownProps) {
       setSelectedOptions([...selectedOptions, option]);
     }
   };
-
-  useEffect(() => {
-    console.log("options: ", options);
-  }, [options]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -122,7 +117,13 @@ export function Dropdown(props: DropdownProps) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedOptions.find((opt) => opt.id === option.id)
+                      selectedOptions.find((opt) => {
+                        if (type === "course") {
+                          return opt === option;
+                        } else {
+                          opt.id === option.id;
+                        }
+                      })
                         ? "opacity-100"
                         : "opacity-0"
                     )}
