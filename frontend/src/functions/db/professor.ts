@@ -8,21 +8,19 @@ export async function getAllProfessors() {
       courses: true
     },
     orderBy: {
-      lastName: "asc"
+      name: "asc",
     }
   })
   return professors
 }
 
 export async function createProfessor(
-  firstName: string,
-  lastName: string,
+  name: string,
   email: string
 ) {
   const professor = await prisma.professor.create({
     data: {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      name: name.trim(),
       email: email.trim()
     },
     include: {

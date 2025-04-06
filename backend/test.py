@@ -12,13 +12,11 @@ def subject_generator():
 def professor_generator():
     professors = [
         {
-            "firstName": "John",
-            "lastName": "Doe",
+            "name": "John Doe", 
             "email": "john.doe@university.edu"
         },
         {
-            "firstName": "Jane",
-            "lastName": "Doe",
+            "name": "Jane Doe",
             "email": "jane.doe@university.edu"
         }
     ]
