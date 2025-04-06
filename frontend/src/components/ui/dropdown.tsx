@@ -70,7 +70,7 @@ export function Dropdown(props: DropdownProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-64 justify-between"
+          className="w-64 justify-between bg-[#F0E7D2] hover:bg-[#A99C7E44] border-1 border-[#A99C7E88] rounded-none font-mono"
         >
           <div className="flex gap-2 justify-start overflow-hidden">
             {selectedOptions?.length ? (
@@ -82,14 +82,14 @@ export function Dropdown(props: DropdownProps) {
                   return option ? (
                     <div
                       key={i}
-                      className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium whitespace-nowrap"
+                      className="px-2 py-1 rounded-xl border bg-[#D2CBBC] text-xs font-medium whitespace-nowrap"
                     >
                       {getOptionLabel(option, type)}
                     </div>
                   ) : null
                 })}
                 {selectedOptions.length > 3 && (
-                  <div className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium">
+                  <div className="px-2 py-1 rounded-xl border bg-[#D2CBBC] text-xs font-medium">
                     +{selectedOptions.length - 3} more
                   </div>
                 )}
@@ -102,7 +102,7 @@ export function Dropdown(props: DropdownProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 p-0">
-        <Command>
+        <Command className="bg-[#F0E7D2] border-1 border-[#A99C7E88] rounded-none font-mono">
           <CommandInput placeholder={searchPlaceholder} />
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
@@ -112,6 +112,7 @@ export function Dropdown(props: DropdownProps) {
                   key={index}
                   value={getOptionLabel(option, type)}
                   onSelect={() => handleSetValue(option)}
+                  className="hover:bg-[#A99C7E88] data-[selected=true]:bg-[#A99C7E88]"
                 >
                   <Check
                     className={cn(
