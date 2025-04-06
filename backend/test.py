@@ -10,7 +10,21 @@ def subject_generator():
         yield subject
 
 def professor_generator():
-    yield 1
+    professors = [
+        {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@university.edu"
+        },
+        {
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "email": "jane.doe@university.edu"
+        }
+    ]
+
+    for professor in professors:
+        yield professor
 
 def course_generator():
     courses = [
@@ -18,8 +32,8 @@ def course_generator():
             "name": "TEST - Introduction to Programming",
             "description": "Test course covering basic programming concepts.",
             "credits": 3,
-            "subjectId": 1,
-            "professorId": 1,
+            "subjectId": 11,
+            "professorId": 5,
             "prerequisiteIds": [],
             "prerequisiteForIds": []
         },
@@ -27,8 +41,8 @@ def course_generator():
             "name": "TEST - Data Structures",
             "description": "Test course on arrays, linked lists, trees, and more.",
             "credits": 4,
-            "subjectId": 1,
-            "professorId": 1,
+            "subjectId": 11,
+            "professorId": 5,
             "prerequisiteIds": [],
             "prerequisiteForIds": []
         },
@@ -36,8 +50,8 @@ def course_generator():
             "name": "TEST - Algorithms",
             "description": "Test course focused on algorithm design and analysis.",
             "credits": 3,
-            "subjectId": 1,
-            "professorId": 1,
+            "subjectId": 11,
+            "professorId": 5,
             "prerequisiteIds": [],
             "prerequisiteForIds": []
         }
