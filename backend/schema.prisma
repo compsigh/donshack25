@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  credits     Int
+
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  takenBy   User[]   @relation("UserCourses")
+
+  // Link to root of its prerequisite logic tree
+  prerequisites   Expression? @relation("CoursePrerequisites", fields: [prerequisitesId], references: [id])
+  prerequisitesId Int?
+
+  // For when an expression is just wrapping a course
+  Expression Expression[]
+}
+
+model Subject {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses   Course[]
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  coursesTaken Course[] @relation("UserCourses")
+}
+
+enum ExprType {
+  AND
+  OR
+  COURSE
+}
+
+model Expression {
+  id   Int      @id @default(autoincrement())
+  type ExprType
+
+  // Only if type == COURSE
+  courseId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  // Parent expression e.g. if it's part of a larger AND/OR expression
+  parentId Int?
+  parent   Expression?  @relation("ParentChild", fields: [parentId], references: [id])
+  children Expression[] @relation("ParentChild")
+
+  // Which courses this expression is a prerequisite for
+  prerequisiteFor Course[] @relation("CoursePrerequisites")
+}

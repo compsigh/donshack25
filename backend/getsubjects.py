@@ -558,10 +558,16 @@ def get_subjects():
     """
     return string_to_json(RAW_STRING)
 
-# import this
-def subject_generator():
-    for s in get_subjects():
-        yield s
+def get_subject_dict():
+    """
+    This function retrieves the subjects from the global variable RAW_STRING.
+    It returns a dictionary where the keys are subject codes and the values are subject names.
+    """
+    subjects = get_subjects()
+    if isinstance(subjects, list):
+        return {subject['name']: subject['code'] for subject in subjects}
+    else:
+        return {"error": "Failed to retrieve subjects", "details": subjects.get("details", "Unknown error")}
 
 # Example usage
 if __name__ == "__main__":
