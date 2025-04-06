@@ -17,8 +17,6 @@ import { getAllCourses } from "@/functions/db/course";
 import CourseFilters from "@/components/ui/courseFilter";
 import { getAllSubjects } from "@/functions/db/subject";
 import { Subject, Course } from "@prisma/client";
-import { useAuth } from "@/components/AppContext";
-import { kMaxLength } from "buffer";
 
 export default function App() {
   const [isMounted, setIsMounted] = useState(false);
@@ -28,7 +26,6 @@ export default function App() {
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
   const [coursesTaken, setCoursesTaken] = useState<Course[]>([]);
-  const { user } = useAuth();
 
   const nodeWidth = 172;
   const nodeHeight = 36;

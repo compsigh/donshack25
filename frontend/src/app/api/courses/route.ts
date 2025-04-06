@@ -67,7 +67,6 @@ export async function PATCH(request: Request) {
       description,
       credits,
       subjectId,
-      professorId,
       prerequisiteIds,
       prerequisiteOfIds,
     } = await request.json();
