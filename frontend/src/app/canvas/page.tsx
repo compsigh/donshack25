@@ -99,6 +99,7 @@ export default function App() {
     edges: any[] | undefined,
     direction = "TB"
   ) => {
+    console.log("edges: ", edges);
     if (!nodes || !edges) {
       return
     }
@@ -178,50 +179,55 @@ export default function App() {
           }
         });
       } else if (expression.type === 'AND' || expression.type === 'OR') {
-        // Get all child courses
+        // Get all immediate child courses
         const childCourses = expression.children
-            .filter(child => child.type === 'COURSE' && child.course)
-            .map(child => ({
+          .filter(child => child.type === 'COURSE' && child.course)
+          .map(child => ({
             id: child.courseId!,
             title: child.course!.title
-            }));
+          }));
         
         if (!childCourses.length) {
             return;
         }
 
-        // Add logic node with courses
+        // Add logic node
         nodes.push({
-            id: expression.id.toString(),
-            position: { x: 0, y: 0 },
-            type: 'logicNode',
-            data: {
+          id: expression.id.toString(),
+          position: { x: 0, y: 0 },
+          type: 'logicNode',
+          data: {
             type: expression.type,
             courses: childCourses
-            }
-        }); 
-        
-        // Process children
+          }
+        });
+
+        // Process all children (both courses and nested logic nodes)
         expression.children.forEach(child => {
           processExpression(child);
           
-          // Add edge from logic node to child
-          const randomString = Math.random().toString(36).slice(2, 6);
+          // Add edge from this logic node to each child
           edges.push({
-            id: randomString,
+            id: `e${expression.id}-${child.id}`,
             source: expression.id.toString(),
             target: child.id.toString(),
             type: "smoothstep",
             animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: '#757575',
+            },
             style: { stroke: "#757575" }
           });
         });
       }
     };
     
-    // Process each expression
+    // Process each root expression
     expressions.forEach(expression => {
-      processExpression(expression);
+      if (!expression.parentId) { // Only process root level expressions
+        processExpression(expression);
+      }
     });
     
     return { nodes, edges };
@@ -280,7 +286,9 @@ export default function App() {
       const allEdges = [...expressionEdges, ...coursePrereqEdges];
       
       const layout = getLayoutedElements(allNodes, allEdges) as any;
-
+    
+      setNodes(layout.nodes);
+      setEdges(layout.edges);
       setInitialNodes(layout.nodes);
       setInitialEdges(layout.edges);
     } catch (error) {
@@ -325,12 +333,15 @@ export default function App() {
     return [...logicNodes, ...filteredCourseNodes];
   }
 
+  // MARK
   useEffect(() => {
     if (!isMounted) {
       setIsMounted(true)
       return
     }
-    const layout = getLayoutedElements(filterNodes(initialNodes), edges) as any
+    console.log("initialEdges: ", initialEdges)
+    const layout = getLayoutedElements(filterNodes(initialNodes), initialEdges) as any
+    console.log("layout.edges: ", layout.edges);
     if (!layout) {
       setNodes(initialNodes)
       setEdges(initialEdges)
@@ -373,7 +384,6 @@ export default function App() {
     }));
 
     if (!coursesTaken.length) {
-      setEdges(newEdges);
       return;
     }
 
@@ -408,7 +418,7 @@ export default function App() {
 
     // Update the edges state with the new styles
     setEdges(newEdges);
-  }, [coursesTaken, nodes]);
+  }, [coursesTaken]);
 
   return (
     <div className="w-full h-screen">

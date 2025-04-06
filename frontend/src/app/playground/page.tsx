@@ -44,6 +44,7 @@ export default function App() {
       dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
     })
 
+    console.log("edges b4 set: ", edges);
     edges.forEach((edge) => {
       dagreGraph.setEdge(edge.source, edge.target)
     })
