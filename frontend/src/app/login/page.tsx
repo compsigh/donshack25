@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 export default function SignIn() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [user, setUser] = useState();
 
   useEffect(() => {
     console.log("Session: ", session);
