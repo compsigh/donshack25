@@ -271,9 +271,9 @@ if __name__ == "__main__":
 
     if unique_session_id and synchronizer_token and cookie:
         # Fetch all course data asynchronously
-        # all_course_data = asyncio.run(get_all_course_data_async(unique_session_id, synchronizer_token, cookie))
-        with open("all_course_data.json", "r", encoding="utf-8") as f:
-            all_course_data = json.load(f)
+        all_course_data = asyncio.run(get_all_course_data_async(unique_session_id, synchronizer_token, cookie))
+        # with open("all_course_data.json", "r", encoding="utf-8") as f:
+        #     all_course_data = json.load(f)
 
         # Fetch all course details asynchronously
         asyncio.run(fetch_all_course_details_async(synchronizer_token, cookie, "202540", all_course_data))
