@@ -8,8 +8,8 @@ datasource db {
 }
 
 model Course {
-  id          Int    @id @default(autoincrement())
-  name        String
+  id    String @id
+  title String
 
   subjectCode String
   subject     Subject @relation(fields: [subjectCode], references: [code])
@@ -44,7 +44,7 @@ model Expression {
   type ExprType
 
   // Only if type == COURSE
-  courseId Int?
+  courseId String?
   course   Course? @relation(fields: [courseId], references: [id])
 
   // Parent expression e.g. if it's part of a larger AND/OR expression

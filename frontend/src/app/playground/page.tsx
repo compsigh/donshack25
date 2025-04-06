@@ -101,7 +101,7 @@ export default function App() {
       id: course.id.toString(),
       position: { x: 0, y: 0 },
       data: {
-        label: course.name,
+        label: course.title,
         subject: course.subject
       }
     }))

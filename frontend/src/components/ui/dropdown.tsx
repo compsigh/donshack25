@@ -1,9 +1,8 @@
 "use client"
 
-import React, { useEffect } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -17,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
 import { Subject, Course } from "@prisma/client"
 
 type Option = Subject | Course
@@ -53,7 +53,7 @@ export function Dropdown(props: DropdownProps) {
     type
   } = props
 
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   const handleSetValue = (option: Option) => {
     if (selectedOptions.includes(option)) {
@@ -76,7 +76,9 @@ export function Dropdown(props: DropdownProps) {
             {selectedOptions?.length ? (
               <>
                 {selectedOptions.slice(0, 3).map((val, i) => {
-                  const option = options.find((opt) => opt.name === val.name) // might break something
+                  const option = options.find(
+                    (opt) => opt.createdAt === val.createdAt
+                  ) // might break something
                   return option ? (
                     <div
                       key={i}
@@ -118,7 +120,7 @@ export function Dropdown(props: DropdownProps) {
                         if (type === "course") {
                           return opt === option
                         } else {
-                          opt.name === option.name // might break something
+                          opt.createdAt === option.createdAt // might break something
                         }
                       })
                         ? "opacity-100"

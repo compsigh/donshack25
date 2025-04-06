@@ -8,18 +8,18 @@ export async function test() {
     const resp = await prisma.course.createMany({
       data: [
         {
-          id: 245,
-          name: "Intro to Programming",
+          id: "CS245",
+          title: "Intro to Programming",
           subjectCode: "CS"
         },
         {
-          id: 315,
-          name: "Data Structures",
+          id: "CS315",
+          title: "Data Structures",
           subjectCode: "CS"
         },
         {
-          id: 326,
-          name: "Algorithms",
+          id: "CS326",
+          title: "Algorithms",
           subjectCode: "CS"
         }
       ],
@@ -32,7 +32,7 @@ export async function test() {
     const courseExpr315 = await prisma.expression.create({
       data: {
         type: "COURSE",
-        course: { connect: { id: 315 } }
+        course: { connect: { id: "CS315" } }
       }
     })
 
@@ -40,7 +40,7 @@ export async function test() {
     const courseExpr326 = await prisma.expression.create({
       data: {
         type: "COURSE",
-        course: { connect: { id: 326 } }
+        course: { connect: { id: "CS326" } }
       }
     })
 
@@ -62,7 +62,7 @@ export async function test() {
     const courseExpr245 = await prisma.expression.create({
       data: {
         type: "COURSE",
-        course: { connect: { id: 245 } }
+        course: { connect: { id: "CS245" } }
       }
     })
 
@@ -83,7 +83,8 @@ export async function test() {
     // 7. Create a new course and link it to the AND expression as its prerequisite
     const newCourse = await prisma.course.create({
       data: {
-        name: "490",
+        id: "CS490",
+        title: "Senior Team",
         subjectCode: "CS",
         prerequisitesId: andExpr.id
       }

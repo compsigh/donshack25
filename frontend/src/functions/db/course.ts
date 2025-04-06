@@ -15,16 +15,13 @@ export async function getAllCourses() {
 }
 
 export async function createOrGetExistingCourse(
-  name: string,
+  id: string,
+  title: string,
   subjectCode: string,
-  prerequisiteIds: number[],
-  prerequisiteForIds: number[]
+  prerequisites: string[]
 ): Promise<Course> {
   const existingCourse = await prisma.course.findFirst({
-    where: {
-      name,
-      subjectCode
-    },
+    where: { id },
     include: {
       subject: true,
       prerequisites: true,
@@ -32,17 +29,14 @@ export async function createOrGetExistingCourse(
     }
   })
 
-  // If it exists already.... return it
-  if (
-    existingCourse?.name === name &&
-    existingCourse.subjectCode === subjectCode
-  ) {
+  if (existingCourse) {
     return existingCourse
   }
 
   const course = await prisma.course.create({
     data: {
-      name: name.trim(),
+      id,
+      title: title.trim(),
       subject: {
         connect: {
           code: subjectCode
@@ -59,40 +53,16 @@ export async function createOrGetExistingCourse(
 }
 
 export async function updateCourse(
-  id: number,
-  name: string,
+  id: string,
+  title: string,
   subjectCode: string,
   prerequisiteIds: number[],
   prerequisiteForIds: number[]
 ): Promise<Course> {
-  // First disconnect existing relationships if new IDs are provided
-  // if (prerequisiteIds || prerequisiteForIds) {
-  //   await prisma.course.update({
-  //     where: { id },
-  //     data: {
-  //       ...(prerequisiteIds
-  //         ? {
-  //             Prerequisites: {
-  //               set: [],
-  //             },
-  //           }
-  //         : {}),
-  //       ...(prerequisiteForIds
-  //         ? {
-  //             prerequisiteOf: {
-  //               set: [],
-  //             },
-  //           }
-  //         : {}),
-  //     },
-  //   })
-  // }
-
-  // Update the course with new data
   const updatedCourse = await prisma.course.update({
     where: { id },
     data: {
-      ...(name && { name: name.trim() }),
+      ...(title && { title: title.trim() }),
       ...(subjectCode && { subjectCode }),
       ...(prerequisiteIds?.length
         ? {

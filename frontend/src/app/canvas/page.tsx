@@ -39,7 +39,7 @@ export default function Canvas() {
         y: Math.floor(index / 3) * 150
       },
       data: {
-        label: course.name,
+        label: course.title,
         subject: course.subject
       }
     }))

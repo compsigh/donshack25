@@ -14,8 +14,9 @@ def load_courses() -> list[dict]:
 def generate_course_payloads() -> Generator[Dict[str, Any], None, None]:
     for course in load_courses():
         yield {
+            "id": f"{course['subjectCode']}{course['courseDisplay']}",
+            "title": f"{course['courseTitle']}",
             "subjectCode": course["subjectCode"],
-            "name": f"{course['subjectCode']} {course['courseDisplay']} - {course['courseTitle']}",
             "prerequisites": process_prerequisites(course.get("getPrerequisites", [])),
         }
 
@@ -42,7 +43,7 @@ def create_expression(prereq: dict) -> dict:
         "type": "COURSE",
         "course": {
             "subjectCode": prereq["subject"],
-            "name": f"{prereq['subject']} {prereq['course_number']}",
+            "courseNumber": f"{prereq['course_number']}",
         },
     }
 

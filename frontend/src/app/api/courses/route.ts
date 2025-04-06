@@ -20,11 +20,20 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { name, subjectCode, prerequisiteIds, prerequisiteOfIds } =
-      await request.json()
+    const { id, title, subjectCode, prerequisites } = await request.json()
 
-    if (!name?.trim()) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!id) {
+      return NextResponse.json(
+        { error: "Course ID is required" },
+        { status: 400 }
+      )
+    }
+
+    if (!title?.trim()) {
+      return NextResponse.json(
+        { error: "Course title is required" },
+        { status: 400 }
+      )
     }
     if (!subjectCode) {
       return NextResponse.json(
@@ -34,10 +43,10 @@ export async function POST(request: Request) {
     }
 
     const course = await createOrGetExistingCourse(
-      name.trim(),
+      id,
+      title.trim(),
       subjectCode,
-      prerequisiteIds,
-      prerequisiteOfIds
+      prerequisites
     )
     return NextResponse.json(course)
   } catch (error) {
