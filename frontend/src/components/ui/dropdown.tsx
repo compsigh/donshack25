@@ -78,8 +78,18 @@ export function Dropdown(props: DropdownProps) {
           <div className="flex gap-2 justify-start overflow-hidden">
             {selectedOptions?.length ? (
               <>
-                {selectedOptions.slice(0, 3).map((val, i) => {
-                  const option = options.find((opt) => opt.id === val.id);
+                {selectedOptions.slice(0, 3).map((val: any, i) => {
+                  console.log("option: ", options);
+                  console.log("val: ", val);
+                  const option = options.find((opt: any) => {
+                    if (type === "course") {
+                      return opt.label === val.label;
+                    } else if (type === "subject") {
+                      return opt.code === val.code;
+                    } else {
+                      return opt.email === val.email;
+                    }
+                });
                   return option ? (
                     <div
                       key={i}
