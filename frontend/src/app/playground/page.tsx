@@ -18,6 +18,8 @@ import CourseFilters from "@/components/ui/courseFilter";
 import { getAllSubjects } from "@/functions/db/subject";
 import { getAllProfessors } from "@/functions/db/professor";
 import { Professor, Subject } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function App() {
   const [isMounted, setIsMounted] = useState(false);
@@ -28,6 +30,8 @@ export default function App() {
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
   const [selectedProfessors, setSelectedProfessors] = useState<Professor[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const nodeWidth = 172;
   const nodeHeight = 36;
@@ -161,8 +165,18 @@ export default function App() {
   }, [selectedSubjects, selectedProfessors]);
 
   useEffect(() => {
-    loadCourseData();
-  }, []);
+    if (status === "loading") return;
+    
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+  
+    if (status === "authenticated" && session) {
+      console.log("Session data:", session);
+      loadCourseData();
+    }
+  }, [status, session]);
 
   return (
     <div className="w-full h-screen">
