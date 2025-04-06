@@ -181,14 +181,9 @@ async def fetch_course_detail(
     """
     url = f"https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/courseSearchResults/{detail}"
     headers = {
-        # ":authority": "reg-prod.ec.usfca.edu",
-        # ":method": "POST",
-        # ":path": f"/StudentRegistrationSsb/ssb/courseSearchResults/{detail}",
-        # ":scheme": "https",
         "accept": "text/html, */*; q=0.01",
         "accept-encoding": "gzip, deflate, br, zstd",
         "accept-language": "en-US,en;q=0.9",
-        "content-length": "43",
         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         "cookie": cookie,
         "origin": "https://reg-prod.ec.usfca.edu",
@@ -221,7 +216,7 @@ async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_c
     """
     async with aiohttp.ClientSession() as session:
         endpoints = [
-            "getCorequisites",
+            # "getCorequisites", //TODO: utalize these later
             "getPrerequisites",
         ]
 
@@ -298,12 +293,12 @@ def fetch_and_save_course_details():
     # all_courses = asyncio.run(
     #         get_all_course_data_async(unique_session_id, synchronizer_token, cookie)
     #     )
-    #     if not all_courses:
-    #         print("Failed to fetch course data.")
-    #         return None
-    #     # Save the fetched course data to a file
-    #     with open("all_course_data.json", "w") as f:
-    #         json.dump(all_courses, f, indent=4)
+    # if not all_courses:
+    #     print("Failed to fetch course data.")
+    #     return None
+    # # Save the fetched course data to a file
+    # with open("all_course_data.json", "w") as f:
+    #     json.dump(all_courses, f, indent=4)
     with open("all_course_data.json", "r") as f:
         all_courses = json.load(f)
     print("Loaded course data from file.")

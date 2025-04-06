@@ -129,15 +129,16 @@ def parse_prerequisites(html_content: str) -> list[dict]:
         for row in table.find_all("tr")[1:]:
             cells = row.find_all("td")
             if len(cells) >= 8:
-                table_rows.append({
-                    "and_or": cells[0].get_text(strip=True),
-                    "test": cells[2].get_text(strip=True),
-                    "score": cells[3].get_text(strip=True),
-                    "subject": cells[4].get_text(strip=True),
-                    "course_number": cells[5].get_text(strip=True),
-                    "level": cells[6].get_text(strip=True),
-                    "grade": cells[7].get_text(strip=True)
-                })
+                if cells[4].get_text(strip=True) and cells[5].get_text(strip=True):
+                    table_rows.append({
+                        "and_or": cells[0].get_text(strip=True),
+                        # "test": cells[2].get_text(strip=True),
+                        # "score": cells[3].get_text(strip=True),
+                        "subject": cells[4].get_text(strip=True),
+                        "course_number": cells[5].get_text(strip=True),
+                        # "level": cells[6].get_text(strip=True),
+                        # "grade": cells[7].get_text(strip=True)
+                    })
     return table_rows
 
 def parse_course_mutual_exclusions(html_content: str) -> str:
@@ -156,41 +157,41 @@ def update_details(data: list[dict]) -> list[dict]:
     Parse relevant fields in the provided data and return the updated data.
     """
     for item in data:
-        # Parse course catalog details
-        html_catalog_details = item.get('getCourseCatalogDetails', '')
-        if html_catalog_details:
-            parsed_catalog_details = parse_course_catalog_details(html_catalog_details)
-            item['getCourseCatalogDetails'] = parsed_catalog_details
+        # # Parse course catalog details
+        # html_catalog_details = item.get('getCourseCatalogDetails', '')
+        # if html_catalog_details:
+        #     parsed_catalog_details = parse_course_catalog_details(html_catalog_details)
+        #     item['getCourseCatalogDetails'] = parsed_catalog_details
 
-        # Parse fees
-        html_fees = item.get('getFees', '')
-        if html_fees:
-            parsed_fees = parse_fees(html_fees)
-            item['getFees'] = parsed_fees
+        # # Parse fees
+        # html_fees = item.get('getFees', '')
+        # if html_fees:
+        #     parsed_fees = parse_fees(html_fees)
+        #     item['getFees'] = parsed_fees
 
-        # Parse course description
-        html_description_content = item.get('getCourseDescription', '')
-        if html_description_content:
-            parsed_description = parse_course_description(html_description_content)
-            item['getCourseDescription'] = parsed_description
+        # # Parse course description
+        # html_description_content = item.get('getCourseDescription', '')
+        # if html_description_content:
+        #     parsed_description = parse_course_description(html_description_content)
+        #     item['getCourseDescription'] = parsed_description
 
-        # Parse syllabus
-        html_syllabus = item.get('getSyllabus', '')
-        if html_syllabus:
-            parsed_syllabus = parse_syllabus(html_syllabus)
-            item['getSyllabus'] = parsed_syllabus
+        # # Parse syllabus
+        # html_syllabus = item.get('getSyllabus', '')
+        # if html_syllabus:
+        #     parsed_syllabus = parse_syllabus(html_syllabus)
+        #     item['getSyllabus'] = parsed_syllabus
 
-        # Parse course attributes
-        html_attributes = item.get('getCourseAttributes', '')
-        if html_attributes:
-            parsed_attributes = parse_course_attributes(html_attributes)
-            item['getCourseAttributes'] = parsed_attributes
+        # # Parse course attributes
+        # html_attributes = item.get('getCourseAttributes', '')
+        # if html_attributes:
+        #     parsed_attributes = parse_course_attributes(html_attributes)
+        #     item['getCourseAttributes'] = parsed_attributes
 
-        # Parse restrictions
-        html_restrictions = item.get('getRestrictions', '')
-        if html_restrictions:
-            parsed_restrictions = parse_restrictions(html_restrictions)
-            item['getRestrictions'] = parsed_restrictions
+        # # Parse restrictions
+        # html_restrictions = item.get('getRestrictions', '')
+        # if html_restrictions:
+        #     parsed_restrictions = parse_restrictions(html_restrictions)
+        #     item['getRestrictions'] = parsed_restrictions
 
         # Parse corequisites
         html_coreq_content = item.get('getCorequisites', '')
@@ -204,11 +205,11 @@ def update_details(data: list[dict]) -> list[dict]:
             parsed_prereq_data = parse_prerequisites(html_prereq_content)
             item['getPrerequisites'] = parsed_prereq_data
 
-        # Parse mutual exclusions
-        html_mutual_exclusions = item.get('getCourseMutuallyExclusions', '')
-        if html_mutual_exclusions:
-            parsed_mutual_exclusions = parse_course_mutual_exclusions(html_mutual_exclusions)
-            item['getCourseMutuallyExclusions'] = parsed_mutual_exclusions
+        # # Parse mutual exclusions
+        # html_mutual_exclusions = item.get('getCourseMutuallyExclusions', '')
+        # if html_mutual_exclusions:
+        #     parsed_mutual_exclusions = parse_course_mutual_exclusions(html_mutual_exclusions)
+        #     item['getCourseMutuallyExclusions'] = parsed_mutual_exclusions
 
     return data
 
