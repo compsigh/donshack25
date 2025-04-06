@@ -10,7 +10,8 @@ import {
   useNodesState,
   useEdgesState,
   ReactFlowProvider,
-  MarkerType
+  MarkerType,
+  BackgroundVariant
 } from "@xyflow/react"
 import dagre from "@dagrejs/dagre"
 import "@xyflow/react/dist/style.css"
@@ -445,9 +446,16 @@ export default function App() {
           nodeTypes={nodeTypes}
           connectionLineType={ConnectionLineType.SmoothStep}
           fitView
-          style={{ backgroundColor: "#F7F9FB" }}
+          proOptions={{ hideAttribution: true }}
+          style={{ backgroundColor: "#F0E7D2" }}
         >
-          <Background />
+           <Background
+            variant={BackgroundVariant.Lines}
+            gap={36}
+            size={1}
+            color="#D2CBBC"
+            style={{ opacity: 0.4 }}
+          />
         </ReactFlow>
       </ReactFlowProvider>
     </div>
