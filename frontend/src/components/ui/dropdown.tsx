@@ -1,34 +1,34 @@
-"use client";
+"use client"
 
-import React, { useEffect } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import React, { useEffect } from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  CommandList
+} from "@/components/ui/command"
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Subject, Course } from "@prisma/client";
+  PopoverTrigger
+} from "@/components/ui/popover"
+import { Subject, Course } from "@prisma/client"
 
-type Option = Subject | Course;
+type Option = Subject | Course
 
 interface DropdownProps {
-  options: Option[];
-  selectedOptions: Option[];
-  setSelectedOptions: (options: any) => void;
-  placeholder: string;
-  searchPlaceholder: string;
-  emptyMessage: string;
-  type: "subject" | "professor" | "course";
+  options: Option[]
+  selectedOptions: Option[]
+  setSelectedOptions: (options: any) => void
+  placeholder: string
+  searchPlaceholder: string
+  emptyMessage: string
+  type: "subject" | "professor" | "course"
 }
 
 const getOptionLabel = (
@@ -36,11 +36,11 @@ const getOptionLabel = (
   type: "subject" | "professor" | "course"
 ): string => {
   if (type === "subject") {
-    return (option as Subject).name;
+    return (option as Subject).name
   } else {
-    return (option as any).label;
+    return (option as any).label
   }
-};
+}
 
 export function Dropdown(props: DropdownProps) {
   const {
@@ -50,18 +50,18 @@ export function Dropdown(props: DropdownProps) {
     placeholder,
     searchPlaceholder,
     emptyMessage,
-    type,
-  } = props;
+    type
+  } = props
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   const handleSetValue = (option: Option) => {
     if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
+      setSelectedOptions(selectedOptions.filter((item) => item !== option))
     } else {
-      setSelectedOptions([...selectedOptions, option]);
+      setSelectedOptions([...selectedOptions, option])
     }
-  };
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -76,7 +76,7 @@ export function Dropdown(props: DropdownProps) {
             {selectedOptions?.length ? (
               <>
                 {selectedOptions.slice(0, 3).map((val, i) => {
-                  const option = options.find((opt) => opt.id === val.id);
+                  const option = options.find((opt) => opt.id === val.id)
                   return option ? (
                     <div
                       key={i}
@@ -84,7 +84,7 @@ export function Dropdown(props: DropdownProps) {
                     >
                       {getOptionLabel(option, type)}
                     </div>
-                  ) : null;
+                  ) : null
                 })}
                 {selectedOptions.length > 3 && (
                   <div className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium">
@@ -116,9 +116,9 @@ export function Dropdown(props: DropdownProps) {
                       "mr-2 h-4 w-4",
                       selectedOptions.find((opt) => {
                         if (type === "course") {
-                          return opt === option;
+                          return opt === option
                         } else {
-                          opt.id === option.id;
+                          opt.id === option.id
                         }
                       })
                         ? "opacity-100"
@@ -133,5 +133,5 @@ export function Dropdown(props: DropdownProps) {
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

@@ -27,21 +27,22 @@ export async function createOrGetExistingCourse(
       name,
       description,
       credits,
-      subjectId,
+      subjectId
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
+      Expression: true
     }
   })
 
   // If it exists already.... return it
-  if (existingCourse?.name === name &&
+  if (
+    existingCourse?.name === name &&
     existingCourse.description === description &&
     existingCourse.credits === credits &&
-    existingCourse.subjectId === subjectId)
-  {
+    existingCourse.subjectId === subjectId
+  ) {
     return existingCourse
   }
 
@@ -52,15 +53,15 @@ export async function createOrGetExistingCourse(
       credits,
       subject: {
         connect: {
-          id: subjectId,
-        },
-      },
+          id: subjectId
+        }
+      }
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
-    },
+      Expression: true
+    }
   })
   return course
 }
@@ -72,7 +73,7 @@ export async function updateCourse(
   credits: number,
   subjectId: number,
   prerequisiteIds: number[],
-  prerequisiteForIds: number[],
+  prerequisiteForIds: number[]
 ): Promise<Course> {
   // First disconnect existing relationships if new IDs are provided
   // if (prerequisiteIds || prerequisiteForIds) {
@@ -108,23 +109,23 @@ export async function updateCourse(
       ...(prerequisiteIds?.length
         ? {
             Prerequisites: {
-              connect: prerequisiteIds.map((id) => ({ id })),
-            },
+              connect: prerequisiteIds.map((id) => ({ id }))
+            }
           }
         : {}),
       ...(prerequisiteForIds?.length
         ? {
             prerequisiteOf: {
-              connect: prerequisiteForIds.map((id) => ({ id })),
-            },
+              connect: prerequisiteForIds.map((id) => ({ id }))
+            }
           }
-        : {}),
+        : {})
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
-    },
+      Expression: true
+    }
   })
 
   return updatedCourse

@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { Subject, Course } from "@prisma/client";
-import { Dropdown } from "./dropdown";
+import { Subject, Course } from "@prisma/client"
+import { Dropdown } from "./dropdown"
 
 interface CourseFilterProps {
-  subjects: Subject[];
-  courses: Course[];
-  coursesTaken: Course[];
-  selectedSubjects: Subject[];
-  setSelectedSubjects: (subjects: Subject[]) => void;
-  setCoursesTaken: (courses: Course[]) => void;
+  subjects: Subject[]
+  courses: Course[]
+  coursesTaken: Course[]
+  selectedSubjects: Subject[]
+  setSelectedSubjects: (subjects: Subject[]) => void
+  setCoursesTaken: (courses: Course[]) => void
 }
 
 export default function CourseFilters(props: CourseFilterProps) {
@@ -19,8 +19,8 @@ export default function CourseFilters(props: CourseFilterProps) {
     coursesTaken,
     selectedSubjects,
     setSelectedSubjects,
-    setCoursesTaken,
-  } = props;
+    setCoursesTaken
+  } = props
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -43,5 +43,5 @@ export default function CourseFilters(props: CourseFilterProps) {
         type="course"
       />
     </div>
-  );
+  )
 }

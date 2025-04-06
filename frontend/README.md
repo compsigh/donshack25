@@ -9,6 +9,7 @@ This API provides endpoints to manage courses, professors, and subjects in an ac
 ### Subjects
 
 #### Create a Subject
+
 ```bash
 curl -X POST http://localhost:3000/api/subjects \
   -H "Content-Type: application/json" \
@@ -19,6 +20,7 @@ curl -X POST http://localhost:3000/api/subjects \
 ```
 
 #### Get All Subjects
+
 ```bash
 curl http://localhost:3000/api/subjects
 ```
@@ -26,6 +28,7 @@ curl http://localhost:3000/api/subjects
 ### Professors
 
 #### Create a Professor
+
 ```bash
 curl -X POST http://localhost:3000/api/professors \
   -H "Content-Type: application/json" \
@@ -36,6 +39,7 @@ curl -X POST http://localhost:3000/api/professors \
 ```
 
 #### Get All Professors
+
 ```bash
 curl http://localhost:3000/api/professors
 ```
@@ -43,6 +47,7 @@ curl http://localhost:3000/api/professors
 ### Courses
 
 #### Create a Course
+
 ```bash
 curl -X POST http://localhost:3000/api/courses \
   -H "Content-Type: application/json" \
@@ -58,6 +63,7 @@ curl -X POST http://localhost:3000/api/courses \
 ```
 
 #### Update a Course
+
 ```bash
 curl -X PATCH http://localhost:3000/api/courses \
   -H "Content-Type: application/json" \
@@ -71,6 +77,7 @@ curl -X PATCH http://localhost:3000/api/courses \
 ```
 
 #### Get All Courses
+
 ```bash
 curl http://localhost:3000/api/courses
 ```
@@ -78,6 +85,7 @@ curl http://localhost:3000/api/courses
 ## Response Formats
 
 ### Subject Response
+
 ```json
 {
   "id": 1,
@@ -90,6 +98,7 @@ curl http://localhost:3000/api/courses
 ```
 
 ### Professor Response
+
 ```json
 {
   "id": 1,
@@ -102,6 +111,7 @@ curl http://localhost:3000/api/courses
 ```
 
 ### Course Response
+
 ```json
 {
   "id": 1,
