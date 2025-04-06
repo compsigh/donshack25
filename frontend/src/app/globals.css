@@ -120,3 +120,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+.react-flow {
+  font-family: var(--font-geist-mono);
+}
+
+.react-flow__node {
+  --xy-node-border-default: 1px solid #A99C7E;
+  --xy-node-background-color-default: #F0E7D2;
+  --xy-node-boxshadow-hover-default: 0 1px 4px 1px #A99C7E44;
+  --xy-node-border-radius-default: 0px;
+}
+
+.react-flow__edge {
+  --xy-edge-stroke-default: #A99C7E;
+}
+
+.react-flow__handle {
+  --xy-handle-border-color-default: #A99C7E;
+  --xy-handle-background-color-default: #D2CBBC;
+}
+
+.react-flow__connection {
+  --xy-connectionline-stroke-default: #A99C7E;
+}
