@@ -174,29 +174,18 @@ export default function App() {
     loadCourseData();
   }, []);
 
-  // useEffect(() => {
-  //   if (!coursesTaken.length) {
-  //     return;
-  //   }
-  //   console.log("nodes: ", nodes);
-  //   console.log("edges: ", edges);
-  //   console.log("coursesTaken: ", coursesTaken);
-
-  //   coursesTaken.forEach((course) => {
-  //     const courseNode = nodes.find((node) => node.data === course);
-  //     if (courseNode) {
-  //       const courseEdges = edges.find
-  //     }
-  //   })
-  // }, [coursesTaken]);
-
   useEffect(() => {
+    // Create a new set of edges based on the current edges
+    const newEdges = edges.map(edge => ({
+      ...edge,
+      animated: true,
+      style: { stroke: "#ff0072" } // Reset to default style
+    }));
+
     if (!coursesTaken.length) {
+      setEdges(newEdges);
       return;
     }
-
-    // Create a new set of edges based on the current edges
-    const newEdges = [...edges];
 
     // Helper function to traverse the tree downwards and mark edges
     const traverseAndMarkEdges = (
@@ -228,7 +217,9 @@ export default function App() {
     // Process each taken course
     coursesTaken.forEach((course) => {
       const courseId = nodes.find((node) => node.data === course)?.id;
-     traverseAndMarkEdges(courseId);
+      if (courseId) {
+        traverseAndMarkEdges(courseId);
+      }
     });
 
     // Update the edges state with the new styles
