@@ -9,7 +9,7 @@ export async function getAllCourses() {
       subject: true,
       professor: true,
       prerequisite: true,
-      prerequisiteOf: true,
+      Expression: true,
     },
   });
   return courses;
@@ -36,7 +36,7 @@ export async function createOrGetExistingCourse(
       subject: true,
       professor: true,
       prerequisite: true,
-      prerequisiteOf: true,
+      Expression: true,
     }
   });
 
@@ -65,26 +65,12 @@ export async function createOrGetExistingCourse(
           id: professorId,
         },
       },
-      ...(prerequisiteIds?.length
-        ? {
-            prerequisite: {
-              connect: prerequisiteIds.map((id) => ({ id })),
-            },
-          }
-        : {}),
-      ...(prerequisiteForIds?.length
-        ? {
-            prerequisiteOf: {
-              connect: prerequisiteForIds.map((id) => ({ id })),
-            },
-          }
-        : {}),
     },
     include: {
       subject: true,
       professor: true,
       prerequisite: true,
-      prerequisiteOf: true,
+      Expression: true,
     },
   });
   return course;
@@ -101,27 +87,27 @@ export async function updateCourse(
   prerequisiteForIds: number[],
 ): Promise<Course> {
   // First disconnect existing relationships if new IDs are provided
-  if (prerequisiteIds || prerequisiteForIds) {
-    await prisma.course.update({
-      where: { id },
-      data: {
-        ...(prerequisiteIds
-          ? {
-              Prerequisites: {
-                set: [],
-              },
-            }
-          : {}),
-        ...(prerequisiteForIds
-          ? {
-              prerequisiteOf: {
-                set: [],
-              },
-            }
-          : {}),
-      },
-    });
-  }
+  // if (prerequisiteIds || prerequisiteForIds) {
+  //   await prisma.course.update({
+  //     where: { id },
+  //     data: {
+  //       ...(prerequisiteIds
+  //         ? {
+  //             Prerequisites: {
+  //               set: [],
+  //             },
+  //           }
+  //         : {}),
+  //       ...(prerequisiteForIds
+  //         ? {
+  //             prerequisiteOf: {
+  //               set: [],
+  //             },
+  //           }
+  //         : {}),
+  //     },
+  //   });
+  // }
 
   // Update the course with new data
   const updatedCourse = await prisma.course.update({
@@ -151,7 +137,7 @@ export async function updateCourse(
       subject: true,
       professor: true,
       prerequisite: true,
-      prerequisiteOf: true,
+      Expression: true,
     },
   });
 
