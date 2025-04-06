@@ -22,9 +22,7 @@ export async function POST(request: Request) {
   try {
     const {
       name,
-      description,
-      credits,
-      subjectId,
+      subjectCode,
       prerequisiteIds,
       prerequisiteOfIds
     } = await request.json()
@@ -32,30 +30,16 @@ export async function POST(request: Request) {
     if (!name?.trim()) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
-    if (!description?.trim()) {
+    if (!subjectCode) {
       return NextResponse.json(
-        { error: "Description is required" },
-        { status: 400 }
-      )
-    }
-    if (typeof credits !== "number" || credits < 0) {
-      return NextResponse.json(
-        { error: "Valid credits number is required" },
-        { status: 400 }
-      )
-    }
-    if (!subjectId) {
-      return NextResponse.json(
-        { error: "Subject ID is required" },
+        { error: "Subject code is required" },
         { status: 400 }
       )
     }
 
     const course = await createOrGetExistingCourse(
       name.trim(),
-      description.trim(),
-      credits,
-      subjectId,
+      subjectCode,
       prerequisiteIds,
       prerequisiteOfIds
     )
@@ -74,9 +58,7 @@ export async function PATCH(request: Request) {
     const {
       id,
       name,
-      description,
-      credits,
-      subjectId,
+      subjectCode,
       prerequisiteIds,
       prerequisiteOfIds
     } = await request.json()
@@ -91,9 +73,7 @@ export async function PATCH(request: Request) {
     const updatedCourse = await updateCourse(
       id,
       name,
-      description,
-      credits,
-      subjectId,
+      subjectCode,
       prerequisiteIds,
       prerequisiteOfIds
     )

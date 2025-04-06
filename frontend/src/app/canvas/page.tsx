@@ -40,8 +40,6 @@ export default function Canvas() {
       },
       data: {
         label: course.name,
-        description: course.description,
-        credits: course.credits,
         subject: course.subject
       }
     }))

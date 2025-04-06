@@ -10,23 +10,17 @@ export async function test() {
         {
           id: 245,
           name: "Intro to Programming",
-          description: "Learn basics",
-          credits: 3,
-          subjectId: 16
+          subjectCode: "CS"
         },
         {
           id: 315,
           name: "Data Structures",
-          description: "Trees, graphs, etc.",
-          credits: 3,
-          subjectId: 16
+          subjectCode: "CS"
         },
         {
           id: 326,
           name: "Algorithms",
-          description: "Design and analysis",
-          credits: 3,
-          subjectId: 16
+          subjectCode: "CS"
         }
       ],
       skipDuplicates: true
@@ -90,9 +84,7 @@ export async function test() {
     const newCourse = await prisma.course.create({
       data: {
         name: "490",
-        description: "Complex prerequisite logic required",
-        credits: 4,
-        subjectId: 16,
+        subjectCode: "CS",
         prerequisitesId: andExpr.id
       }
     })

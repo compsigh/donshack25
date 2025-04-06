@@ -10,11 +10,9 @@ datasource db {
 model Course {
   id          Int    @id @default(autoincrement())
   name        String
-  description String
-  credits     Int
 
-  subjectId Int
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectCode String
+  subject     Subject @relation(fields: [subjectCode], references: [code])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -28,9 +26,8 @@ model Course {
 }
 
 model Subject {
-  id        Int      @id @default(autoincrement())
+  code      String   @id
   name      String
-  code      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   courses   Course[]

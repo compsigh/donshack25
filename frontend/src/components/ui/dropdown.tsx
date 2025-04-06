@@ -76,7 +76,7 @@ export function Dropdown(props: DropdownProps) {
             {selectedOptions?.length ? (
               <>
                 {selectedOptions.slice(0, 3).map((val, i) => {
-                  const option = options.find((opt) => opt.id === val.id)
+                  const option = options.find((opt) => opt.name === val.name) // might break something
                   return option ? (
                     <div
                       key={i}
@@ -118,7 +118,7 @@ export function Dropdown(props: DropdownProps) {
                         if (type === "course") {
                           return opt === option
                         } else {
-                          opt.id === option.id
+                          opt.name === option.name // might break something
                         }
                       })
                         ? "opacity-100"

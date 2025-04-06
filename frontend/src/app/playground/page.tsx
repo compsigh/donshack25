@@ -102,8 +102,6 @@ export default function App() {
       position: { x: 0, y: 0 },
       data: {
         label: course.name,
-        description: course.description,
-        credits: course.credits,
         subject: course.subject
       }
     }))
@@ -134,7 +132,7 @@ export default function App() {
     const resp = nodes.filter((node) => {
       const subjectMatch =
         selectedSubjects.filter(
-          (subject) => subject.id === node.data.subject.id
+          (subject) => subject.code === node.data.subject.code
         ).length > 0
       return subjectMatch
     })
