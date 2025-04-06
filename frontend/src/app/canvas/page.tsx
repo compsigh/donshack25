@@ -19,16 +19,52 @@ import CourseFilters from "@/components/ui/courseFilter"
 import { getAllSubjects } from "@/functions/db/subject"
 import { Subject, Course } from "@prisma/client"
 import { recursiveQuery } from "@/functions/db/test"
-import { randomUUID } from "crypto"
+
+interface LogicNodeProps {
+    data: {
+        type: 'AND' | 'OR';
+        courses: Course[];
+    }
+}
 
 // Custom node types for AND/OR logic
-const LogicNode = ({ data }: any) => {
-  return (
-    <div className={`px-4 py-2 rounded-md ${data.type === 'AND' ? 'bg-blue-500' : 'bg-orange-500'} text-white font-bold flex items-center justify-center`}>
-      {data.type}
-    </div>
-  );
-};
+const LogicNode = ({ data }: LogicNodeProps) => {
+    const { type, courses } = data;
+    // Determine styling based on node type
+    const headerBgColor = type === 'AND' ? 'bg-blue-600' : 'bg-orange-600';
+    const bodyBgColor = type === 'AND' ? 'bg-blue-100' : 'bg-orange-100';
+    const borderColor = type === 'AND' ? 'border-blue-600' : 'border-orange-600';
+    
+    return (
+      <div className={`rounded-md shadow-md overflow-hidden border-2 ${borderColor} w-64`}>
+        {/* Header with node type */}
+        <div className={`${headerBgColor} text-white font-bold py-2 px-4 text-center`}>
+          {type === 'AND' ? 'All Required' : 'Any One Required'}
+        </div>
+        
+        {/* Courses list */}
+        <div className={`${bodyBgColor} p-2`}>
+          {courses.length > 0 ? (
+            <ul className="divide-y divide-gray-200">
+              {courses.map((course) => (
+                <li key={course.id} className="py-2 px-1 flex items-center">
+                  <span className="font-medium text-gray-800">{course.id}</span>
+                  <span className="ml-2 text-sm text-gray-600">{course.title}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-500 text-center py-2">No courses specified</p>
+          )}
+        </div>
+        
+        {/* Footer with course count */}
+        <div className={`${headerBgColor} bg-opacity-80 text-white text-xs py-1 px-4 text-center`}>
+          {courses.length} course{courses.length !== 1 ? 's' : ''}
+        </div>
+      </div>
+    );
+  };
 
 // Define node types
 const nodeTypes = {
@@ -69,8 +105,13 @@ export default function App() {
     dagreGraph.setGraph({ rankdir: direction })
 
     nodes.forEach((node) => {
-      dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
-    })
+        // Use larger dimensions for logic nodes
+        const isLogicNode = node.type === 'logicNode';
+        const width = isLogicNode ? 256 : nodeWidth; // 256px for logic nodes
+        const height = isLogicNode ? 150 : nodeHeight; // 150px for logic nodes
+        
+        dagreGraph.setNode(node.id, { width, height });
+      });
 
     edges.forEach((edge) => {
       dagreGraph.setEdge(edge.source, edge.target)
@@ -137,15 +178,28 @@ export default function App() {
           }
         });
       } else if (expression.type === 'AND' || expression.type === 'OR') {
-        // Add logic node
+        // Get all child courses
+        const childCourses = expression.children
+            .filter(child => child.type === 'COURSE' && child.course)
+            .map(child => ({
+            id: child.courseId!,
+            title: child.course!.title
+            }));
+        
+        if (!childCourses.length) {
+            return;
+        }
+
+        // Add logic node with courses
         nodes.push({
-          id: expression.id.toString(),
-          position: { x: 0, y: 0 },
-          type: 'logicNode',
-          data: {
-            type: expression.type
-          }
-        });
+            id: expression.id.toString(),
+            position: { x: 0, y: 0 },
+            type: 'logicNode',
+            data: {
+            type: expression.type,
+            courses: childCourses
+            }
+        }); 
         
         // Process children
         expression.children.forEach(child => {
@@ -226,6 +280,8 @@ export default function App() {
       const allEdges = [...expressionEdges, ...coursePrereqEdges];
       
       const layout = getLayoutedElements(allNodes, allEdges) as any;
+
+
 
       console.log("Layout nodes:", layout.nodes);
       console.log("Layout edges:", layout.edges);
