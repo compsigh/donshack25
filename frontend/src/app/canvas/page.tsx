@@ -30,36 +30,35 @@ export default function Canvas() {
 
   const loadCourseData = async () => {
     const courses = await getAllCourses();
-    
+
     const courseNodes = courses.map((course, index) => ({
       id: course.id.toString(),
       // Position nodes in a grid layout
-      position: { 
-        x: (index % 3) * 250, 
-        y: Math.floor(index / 3) * 150 
+      position: {
+        x: (index % 3) * 250,
+        y: Math.floor(index / 3) * 150
       },
       data: {
         label: course.name,
         description: course.description,
         credits: course.credits,
         subject: course.subject,
-        professor: course.professor
       }
     }));
 
     // Create edges from prerequisite relationships
-    const courseEdges = courses.flatMap(course => 
-      course.prerequisite.map(relatedCourse => ({
-        id: `e${course.id}-${relatedCourse.id}`,
-        source: course.id.toString(),
-        target: relatedCourse.id.toString(),
-        animated: true,
-        style: { stroke: '#ff0072' }
-      }))
-    );
+    // const courseEdges = courses.flatMap(course =>
+    //   course.prerequisite.map(relatedCourse => ({
+    //     id: `e${course.id}-${relatedCourse.id}`,
+    //     source: course.id.toString(),
+    //     target: relatedCourse.id.toString(),
+    //     animated: true,
+    //     style: { stroke: '#ff0072' }
+    //   }))
+    // );
 
     setNodes(courseNodes);
-    setEdges(courseEdges);
+    setEdges([]);
   };
 
   useEffect(() => {

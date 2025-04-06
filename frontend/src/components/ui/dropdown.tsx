@@ -17,9 +17,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Subject, Professor, Course } from "@prisma/client";
+import { Subject, Course } from "@prisma/client";
 
-type Option = Subject | Professor | Course;
+type Option = Subject | Course;
 
 interface DropdownProps {
   options: Option[];
@@ -37,11 +37,8 @@ const getOptionLabel = (
 ): string => {
   if (type === "subject") {
     return (option as Subject).name;
-  } else if (type === "course") {
-    return (option as any).label;
   } else {
-    const prof = option as Professor;
-    return prof.name;
+    return (option as any).label;
   }
 };
 

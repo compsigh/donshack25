@@ -1,18 +1,17 @@
-"use server";
+"use server"
 
-import prisma from "@/functions/db";
-import { Course } from "@prisma/client";
+import prisma from "@/functions/db"
+import { Course } from "@prisma/client"
 
 export async function getAllCourses() {
   const courses = await prisma.course.findMany({
     include: {
       subject: true,
-      professor: true,
-      prerequisite: true,
-      Expression: true,
-    },
-  });
-  return courses;
+      prerequisites: true,
+      Expression: true
+    }
+  })
+  return courses
 }
 
 export async function createOrGetExistingCourse(
@@ -20,7 +19,6 @@ export async function createOrGetExistingCourse(
   description: string,
   credits: number,
   subjectId: number,
-  professorId: number,
   prerequisiteIds: number[],
   prerequisiteForIds: number[]
 ): Promise<Course> {
@@ -30,24 +28,21 @@ export async function createOrGetExistingCourse(
       description,
       credits,
       subjectId,
-      professorId,
     },
     include: {
       subject: true,
-      professor: true,
-      prerequisite: true,
+      prerequisites: true,
       Expression: true,
     }
-  });
+  })
 
   // If it exists already.... return it
-  if (existingCourse?.name === name && 
+  if (existingCourse?.name === name &&
     existingCourse.description === description &&
     existingCourse.credits === credits &&
-    existingCourse.subjectId === subjectId &&
-    existingCourse.professorId === professorId) 
+    existingCourse.subjectId === subjectId)
   {
-    return existingCourse;
+    return existingCourse
   }
 
   const course = await prisma.course.create({
@@ -60,20 +55,14 @@ export async function createOrGetExistingCourse(
           id: subjectId,
         },
       },
-      professor: {
-        connect: {
-          id: professorId,
-        },
-      },
     },
     include: {
       subject: true,
-      professor: true,
-      prerequisite: true,
+      prerequisites: true,
       Expression: true,
     },
-  });
-  return course;
+  })
+  return course
 }
 
 export async function updateCourse(
@@ -82,7 +71,6 @@ export async function updateCourse(
   description: string,
   credits: number,
   subjectId: number,
-  professorId: number,
   prerequisiteIds: number[],
   prerequisiteForIds: number[],
 ): Promise<Course> {
@@ -106,7 +94,7 @@ export async function updateCourse(
   //           }
   //         : {}),
   //     },
-  //   });
+  //   })
   // }
 
   // Update the course with new data
@@ -117,7 +105,6 @@ export async function updateCourse(
       ...(description && { description: description.trim() }),
       ...(credits && { credits }),
       ...(subjectId && { subjectId }),
-      ...(professorId && { professorId }),
       ...(prerequisiteIds?.length
         ? {
             Prerequisites: {
@@ -135,11 +122,10 @@ export async function updateCourse(
     },
     include: {
       subject: true,
-      professor: true,
-      prerequisite: true,
+      prerequisites: true,
       Expression: true,
     },
-  });
+  })
 
-  return updatedCourse;
+  return updatedCourse
 }

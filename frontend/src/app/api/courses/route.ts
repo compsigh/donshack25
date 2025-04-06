@@ -22,7 +22,6 @@ export async function POST(request: Request) {
       description,
       credits,
       subjectId,
-      professorId,
       prerequisiteIds,
       prerequisiteOfIds,
     } = await request.json()
@@ -39,16 +38,12 @@ export async function POST(request: Request) {
     if (!subjectId) {
       return NextResponse.json({ error: "Subject ID is required" }, { status: 400 })
     }
-    if (!professorId) {
-      return NextResponse.json({ error: "Professor ID is required" }, { status: 400 })
-    } 
 
     const course = await createOrGetExistingCourse(
       name.trim(),
       description.trim(),
       credits,
       subjectId,
-      professorId,
       prerequisiteIds,
       prerequisiteOfIds,
     )
@@ -66,13 +61,13 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { 
+    const {
       id,
-      name, 
-      description, 
-      credits, 
-      subjectId, 
-      professorId, 
+      name,
+      description,
+      credits,
+      subjectId,
+      professorId,
       prerequisiteIds,
       prerequisiteOfIds,
     } = await request.json();
@@ -87,16 +82,15 @@ export async function PATCH(request: Request) {
       description,
       credits,
       subjectId,
-      professorId,
       prerequisiteIds,
       prerequisiteOfIds,
     );
-    
+
     return NextResponse.json(updatedCourse);
   } catch (error) {
     console.error('Error updating course:', error);
     return NextResponse.json(
-      { error: 'Failed to update course' }, 
+      { error: 'Failed to update course' },
       { status: 500 }
     );
   }

@@ -1,30 +1,24 @@
 "use client";
 
-import { Professor, Subject, Course } from "@prisma/client";
+import { Subject, Course } from "@prisma/client";
 import { Dropdown } from "./dropdown";
 
 interface CourseFilterProps {
   subjects: Subject[];
-  professors: Professor[];
   courses: Course[];
   coursesTaken: Course[];
   selectedSubjects: Subject[];
-  selectedProfessors: Professor[];
   setSelectedSubjects: (subjects: Subject[]) => void;
-  setSelectedProfessors: (professors: Professor[]) => void;
   setCoursesTaken: (courses: Course[]) => void;
 }
 
 export default function CourseFilters(props: CourseFilterProps) {
   const {
     subjects,
-    professors,
     courses,
     coursesTaken,
     selectedSubjects,
-    selectedProfessors,
     setSelectedSubjects,
-    setSelectedProfessors,
     setCoursesTaken,
   } = props;
 
@@ -39,17 +33,6 @@ export default function CourseFilters(props: CourseFilterProps) {
         emptyMessage="No subjects found"
         type="subject"
       />
-
-      <Dropdown
-        options={professors}
-        selectedOptions={selectedProfessors}
-        setSelectedOptions={setSelectedProfessors}
-        placeholder="Select professors..."
-        searchPlaceholder="Search professors..."
-        emptyMessage="No professors found"
-        type="professor"
-      />
-
       <Dropdown
         options={courses}
         selectedOptions={coursesTaken}

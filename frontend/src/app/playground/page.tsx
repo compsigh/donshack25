@@ -16,8 +16,7 @@ import "@xyflow/react/dist/style.css";
 import { getAllCourses } from "@/functions/db/course";
 import CourseFilters from "@/components/ui/courseFilter";
 import { getAllSubjects } from "@/functions/db/subject";
-import { getAllProfessors } from "@/functions/db/professor";
-import { Professor, Subject, Course } from "@prisma/client";
+import { Subject, Course } from "@prisma/client";
 import { useAuth } from "@/components/AppContext";
 import { kMaxLength } from "buffer";
 
@@ -26,9 +25,7 @@ export default function App() {
   const [initialNodes, setInitialNodes] = useState<any[]>([]);
   const [initialEdges, setInitialEdges] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [professors, setProfessors] = useState<Professor[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
-  const [selectedProfessors, setSelectedProfessors] = useState<Professor[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
   const [coursesTaken, setCoursesTaken] = useState<Course[]>([]);
   const { user } = useAuth();
@@ -101,9 +98,6 @@ export default function App() {
     const subjects = await getAllSubjects();
     setSubjects(subjects);
 
-    const professors = await getAllProfessors();
-    setProfessors(professors);
-
     const courses = await getAllCourses();
 
     const courseNodes = courses.map((course) => ({
@@ -114,23 +108,22 @@ export default function App() {
         description: course.description,
         credits: course.credits,
         subject: course.subject,
-        professor: course.professor,
       },
     }));
 
     // Create edges from prerequisite relationships
-    const courseEdges = courses.flatMap((course) =>
-      course.prerequisite.map((relatedCourse) => ({
-        id: `e${course.id}-${relatedCourse.id}`,
-        source: course.id.toString(),
-        target: relatedCourse.id.toString(),
-        type: "smoothstep",
-        animated: true,
-        style: { stroke: "#ff0072" },
-      }))
-    );
+    // const courseEdges = courses.flatMap((course) =>
+    //   course.prerequisites.map((relatedCourse) => ({
+    //     id: `e${course.id}-${relatedCourse.id}`,
+    //     source: course.id.toString(),
+    //     target: relatedCourse.id.toString(),
+    //     type: "smoothstep",
+    //     animated: true,
+    //     style: { stroke: "#ff0072" },
+    //   }))
+    // );
 
-    const layout = getLayoutedElements(courseNodes, courseEdges) as any;
+    const layout = getLayoutedElements(courseNodes, []) as any;
     setNodes(layout.nodes);
     setEdges(layout.edges);
     setInitialNodes(layout.nodes);
@@ -138,7 +131,7 @@ export default function App() {
   };
 
   const filterNodes = (nodes: any[]) => {
-    if (selectedSubjects.length === 0 && selectedProfessors.length === 0) {
+    if (selectedSubjects.length === 0) {
       return initialNodes;
     }
     const resp = nodes.filter((node) => {
@@ -146,11 +139,7 @@ export default function App() {
         selectedSubjects.filter(
           (subject) => subject.id === node.data.subject.id
         ).length > 0;
-      const professorMatch =
-        selectedProfessors.filter(
-          (professor) => professor.id === node.data.professor.id
-        ).length > 0;
-      return subjectMatch || professorMatch;
+      return subjectMatch;
     });
     return resp;
   };
@@ -168,7 +157,7 @@ export default function App() {
     }
     setNodes(layout.nodes);
     setEdges(layout.edges);
-  }, [selectedSubjects, selectedProfessors]);
+  }, [selectedSubjects]);
 
   useEffect(() => {
     loadCourseData();
@@ -235,11 +224,8 @@ export default function App() {
             coursesTaken={coursesTaken}
             setCoursesTaken={setCoursesTaken}
             subjects={subjects}
-            professors={professors}
             selectedSubjects={selectedSubjects}
             setSelectedSubjects={setSelectedSubjects}
-            selectedProfessors={selectedProfessors}
-            setSelectedProfessors={setSelectedProfessors}
           />
         </Panel>
 

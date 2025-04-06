@@ -14,7 +14,6 @@ export async function test() {
           description: "Learn basics",
           credits: 3,
           subjectId: 16,
-          professorId: 1,
         },
         {
           id: 315,
@@ -22,7 +21,6 @@ export async function test() {
           description: "Trees, graphs, etc.",
           credits: 3,
           subjectId: 16,
-          professorId: 1,
         },
         {
           id: 326,
@@ -30,12 +28,11 @@ export async function test() {
           description: "Design and analysis",
           credits: 3,
           subjectId: 16,
-          professorId: 1,
         },
       ],
       skipDuplicates: true,
     });
-    
+
     console.log("resps: ", resp);
 
     // 2. Create COURSE expression for 315
@@ -97,8 +94,7 @@ export async function test() {
         description: "Complex prerequisite logic required",
         credits: 4,
         subjectId: 16,
-        professorId: 1,
-        prerequisiteId: andExpr.id,
+        prerequisitesId: andExpr.id,
       },
     });
 
