@@ -1,6 +1,8 @@
+import os
 import re
 import json
 import requests
+import time  # Import the time module
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -17,6 +19,7 @@ def get_tokens_and_cookie():
         tuple: A tuple containing the uniqueSessionId, synchronizer_token, and
                cookie as strings.
     """
+    start_time = time.time()  # Start timing
     chrome_options = Options()
     chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
     chrome_options.add_argument("--headless")  # Run in headless mode
@@ -81,7 +84,6 @@ def get_tokens_and_cookie():
         # Get cookies
         cookie = headers.get("cookie")
 
-
         return unique_session_id, synchronizer_token, cookie
 
     except Exception as e:
@@ -90,21 +92,26 @@ def get_tokens_and_cookie():
 
     finally:
         driver.quit()
+        end_time = time.time()  # End timing
+        print(f"get_tokens_and_cookie took {end_time - start_time:.2f} seconds")
 
 
-def get_course_data(unique_session_id, synchronizer_token, cookie):
+def get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0, page_max_size=500):
     """
     Fetches course data from the USFCA registration API using the provided
-    tokens and cookie.
+    tokens, cookie, and pagination parameters.
 
     Args:
         unique_session_id (str): The unique session ID.
         synchronizer_token (str): The X-Synchronizer-Token.
         cookie (str): The session cookie.
+        page_offset (int): The offset for pagination.
+        page_max_size (int): The maximum number of results per page.
 
     Returns:
         dict: The JSON response from the API.
     """
+    start_time = time.time()  # Start timing
     headers = {
         "Host": "reg-prod.ec.usfca.edu",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
@@ -127,7 +134,8 @@ def get_course_data(unique_session_id, synchronizer_token, cookie):
         "txt_term": "202540",  # Changed term to Fall 2025
         "startDatepicker": "",
         "endDatepicker": "",
-        "pageOffset": "0",
+        "pageOffset": str(page_offset),
+        "pageMaxSize": str(page_max_size),
         "uniqueSessionId": unique_session_id,
         "sortColumn": "subjectDescription",
         "sortDirection": "asc",
@@ -137,10 +145,46 @@ def get_course_data(unique_session_id, synchronizer_token, cookie):
 
     response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+    end_time = time.time()  # End timing
+    print(f"get_course_data (offset={page_offset}, max={page_max_size}) took {end_time - start_time:.2f} seconds")
     return response.json()
 
 
+def get_all_course_data(unique_session_id, synchronizer_token, cookie):
+    """
+    Fetches all course data by iterating through paginated results.
+
+    Args:
+        unique_session_id (str): The unique session ID.
+        synchronizer_token (str): The X-Synchronizer-Token.
+        cookie (str): The session cookie.
+
+    Returns:
+        list: A list of all course data entries.
+    """
+    start_time = time.time()  # Start timing
+    # Fetch the first page with a max size of 1 to determine total entries
+    initial_response = get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0, page_max_size=1)
+    total_entries = initial_response.get("totalCount", 0)
+    print(f"Total entries found: {total_entries}")
+
+    # Start with the data from the initial response
+    all_courses = initial_response.get("data", [])
+    page_max_size = 500
+
+    # Iterate through the remaining pages
+    for offset in range(1, total_entries, page_max_size):
+        print(f"Fetching courses with offset {offset}...")
+        response = get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=offset, page_max_size=page_max_size)
+        all_courses.extend(response.get("data", []))
+
+    end_time = time.time()  # End timing
+    print(f"get_all_course_data took {end_time - start_time:.2f} seconds")
+    return all_courses
+
+
 if __name__ == "__main__":
+    start_time = time.time()  # Start timing the main program
     # Get tokens and cookie using Selenium
     unique_session_id, synchronizer_token, cookie = get_tokens_and_cookie()
     print("unique_session_id: " + unique_session_id)
@@ -148,14 +192,21 @@ if __name__ == "__main__":
     print("cookie: " + cookie)
 
     if unique_session_id and synchronizer_token and cookie:
-        # Fetch course data using the tokens and cookie
-        course_data = get_course_data(unique_session_id, synchronizer_token, cookie)
+        # Fetch all course data using the tokens and cookie
+        all_course_data = get_all_course_data(unique_session_id, synchronizer_token, cookie)
+        print(f"Total number of courses retrieved: {len(all_course_data)}")
 
         # Save the JSON response to a file
-        with open("course_data.json", "w", encoding="utf-8") as f:
-            json.dump(course_data, f, indent=2)
+        with open("all_course_data.json", "w", encoding="utf-8") as f:
+            json.dump(all_course_data, f, indent=2)
 
-        print("Course data saved to course_data.json")
+        # Calculate the size of the saved file in MB
+        file_size = os.path.getsize("all_course_data.json") / (1024 * 1024)
+        print(f"File size: {file_size:.2f} MB")
+
+        print("All course data saved to all_course_data.json")
     else:
         print("Failed to retrieve tokens and cookie.")
 
+    end_time = time.time()  # End timing the main program
+    print(f"Program execution took {end_time - start_time:.2f} seconds")
