@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "@/functions/db";
 
 export async function getAllSubjects() {
