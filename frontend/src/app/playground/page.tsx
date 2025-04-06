@@ -22,8 +22,7 @@ export default function App() {
   const [subjects, setSubjects] = useState<string[]>([]);
   const [professors, setProfessors] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
-  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]); 
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
   const nodeWidth = 172;
@@ -123,6 +122,7 @@ export default function App() {
 
 
     const subjects = await getAllSubjects();
+    console.log("Subjects: ", subjects);
     setSubjects(subjects.map((subject) => `(${subject.code} - ${subject.name})`));
 
     const professors = await getAllProfessors();
