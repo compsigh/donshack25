@@ -37,6 +37,8 @@ const getOptionLabel = (
 ): string => {
   if (type === "subject") {
     return (option as Subject).name;
+  } else if (type === "course") {
+    return (option as any).label;
   } else {
     const prof = option as Professor;
     return prof.name;
@@ -63,10 +65,6 @@ export function Dropdown(props: DropdownProps) {
       setSelectedOptions([...selectedOptions, option]);
     }
   };
-
-  useEffect(() => {
-    console.log("options: ", options);
-  }, [options]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -110,16 +108,22 @@ export function Dropdown(props: DropdownProps) {
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.id}
+                  key={index}
                   value={getOptionLabel(option, type)}
                   onSelect={() => handleSetValue(option)}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedOptions.find((opt) => opt.id === option.id)
+                      selectedOptions.find((opt) => {
+                        if (type === "course") {
+                          return opt === option;
+                        } else {
+                          opt.id === option.id;
+                        }
+                      })
                         ? "opacity-100"
                         : "opacity-0"
                     )}
