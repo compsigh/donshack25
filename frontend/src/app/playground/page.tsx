@@ -207,7 +207,7 @@ export default function App() {
       visited.add(courseId);
 
       // Find all edges where this course is the target
-      const incomingEdges = edges.filter((edge) => edge.target === courseId);
+      const incomingEdges = edges.filter((edge) => edge.source === courseId);
 
       incomingEdges.forEach((edge) => {
         // Update the edge style
@@ -221,14 +221,13 @@ export default function App() {
         }
 
         // Recursively traverse to the source of this edge
-        traverseAndMarkEdges(edge.source, visited);
+        traverseAndMarkEdges(edge.target, visited);
       });
     };
 
     // Process each taken course
     coursesTaken.forEach((course) => {
       const courseId = nodes.find((node) => node.data === course)?.id;
-      console.log("courseId: ", courseId);
      traverseAndMarkEdges(courseId);
     });
 
