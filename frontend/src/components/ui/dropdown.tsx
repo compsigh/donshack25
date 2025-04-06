@@ -118,7 +118,7 @@ export function Dropdown(props: DropdownProps) {
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {options.map((option, index) => (
+              {options.map((option: any, index) => (
                 <CommandItem
                   key={index}
                   value={getOptionLabel(option, type)}
@@ -127,11 +127,13 @@ export function Dropdown(props: DropdownProps) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedOptions.find((opt) => {
+                      selectedOptions.find((opt: any) => {
                         if (type === "course") {
-                          return opt === option;
+                          return opt.label === option.label;
+                        } else if (type === "subject") {
+                          return opt.code === option.code;
                         } else {
-                          opt.id === option.id;
+                          return opt.email === option.email;
                         }
                       })
                         ? "opacity-100"
