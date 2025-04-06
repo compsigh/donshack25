@@ -281,12 +281,6 @@ export default function App() {
       
       const layout = getLayoutedElements(allNodes, allEdges) as any;
 
-
-
-      console.log("Layout nodes:", layout.nodes);
-      console.log("Layout edges:", layout.edges);
-      setNodes(layout.nodes);
-      setEdges(layout.edges);
       setInitialNodes(layout.nodes);
       setInitialEdges(layout.edges);
     } catch (error) {
@@ -317,7 +311,14 @@ export default function App() {
         selectedSubjects.filter(
           (subject) => subject.code === node.data.subject.code
         ).length > 0;
-      return subjectMatch;
+
+        console.log('node: ', node);
+        console.log('logicNodes: ', logicNodes);
+
+        const courseId = node.data.courseId;
+        const courseIdMatch = logicNodes.some((node) => node.data.courses.some((course: any) => course.id === courseId));
+    
+      return subjectMatch && !courseIdMatch
     });
     
     // Return both logic nodes and filtered course nodes
