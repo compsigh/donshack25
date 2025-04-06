@@ -17,14 +17,16 @@ import { getAllCourses } from "@/functions/db/course";
 import CourseFilters from "@/components/ui/courseFilter";
 import { getAllSubjects } from "@/functions/db/subject";
 import { getAllProfessors } from "@/functions/db/professor";
+import { Professor, Subject } from "@prisma/client";
 
 export default function App() {
   const [isMounted, setIsMounted] = useState(false);
   const [initialNodes, setInitialNodes] = useState<any[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [professors, setProfessors] = useState<string[]>([]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
+  const [initialEdges, setInitialEdges] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
+  const [selectedProfessors, setSelectedProfessors] = useState<Professor[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
   const nodeWidth = 172;
@@ -93,14 +95,10 @@ export default function App() {
 
   const loadCourseData = async () => {
     const subjects = await getAllSubjects();
-    setSubjects(
-      subjects.map((subject) => `${subject.code} - ${subject.name}`)
-    );
+    setSubjects(subjects);
 
     const professors = await getAllProfessors();
-    setProfessors(
-      professors.map((prof) => `${prof.firstName} ${prof.lastName}`)
-    );
+    setProfessors(professors);
 
     const courses = await getAllCourses();
 
@@ -127,37 +125,24 @@ export default function App() {
         style: { stroke: "#ff0072" },
       }))
     );
-    setInitialNodes(courseNodes);
 
-    const layout = getLayoutedElements(
-      courseNodes,
-      courseEdges
-    ) as any;
+    const layout = getLayoutedElements(courseNodes, courseEdges) as any;
     setNodes(layout.nodes);
     setEdges(layout.edges);
+    setInitialNodes(layout.nodes);
+    setInitialEdges(layout.edges);
   };
 
   const filterNodes = (nodes: any[]) => {
     if (selectedSubjects.length === 0 && selectedProfessors.length === 0) {
       return initialNodes;
     }
-
-    const validSubject = (subject: any) => {
-      return selectedSubjects.includes(`${subject.code} - ${subject.name}`);
-    };
-    const validProfessor = (professor: any) => {
-      return selectedProfessors.includes(`${professor.firstName} ${professor.lastName}`);
-    };
-    return nodes.filter(
-      (node) => {
-        console.log("selectedSubjects: ", selectedSubjects);
-        console.log("node.data.subject.code: ", node.data.subject.code);
-        console.log("node.data.subject.name: ", node.data.subject.name);
-        console.log("node.data.subject.code - node.data.subject.name: ", `${node.data.subject.code} - ${node.data.subject.name}`);
-        console.log("selectedSubjects.includes(node.data.subject.code - node.data.subject.name): ", selectedSubjects.includes(`${node.data.subject.code} - ${node.data.subject.name}`));
-        return selectedSubjects.includes(`${node.data.subject.code} - ${node.data.subject.name}`);
-      }
-    );
+    const resp = nodes.filter((node) => {
+      const subjectMatch =  selectedSubjects.filter((subject) => subject.id === node.data.subject.id).length > 0;
+      const professorMatch = selectedProfessors.filter((professor) => professor.id === node.data.professor.id).length > 0;
+      return subjectMatch || professorMatch;
+    });
+    return resp;
   };
 
   useEffect(() => {
@@ -165,9 +150,12 @@ export default function App() {
       setIsMounted(true);
       return;
     }
-    console.log("nodes: ", nodes);
-    console.log("filtered nodes: ", filterNodes(nodes));
-    const layout = getLayoutedElements(filterNodes(nodes), edges) as any;
+    const layout = getLayoutedElements(filterNodes(initialNodes), edges) as any;
+    if (!layout) {
+      setNodes(initialNodes);
+      setEdges(initialEdges);
+      return;
+    }
     setNodes(layout.nodes);
     setEdges(layout.edges);
   }, [selectedSubjects, selectedProfessors]);

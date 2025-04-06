@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Professor, Subject } from "@prisma/client";
 import { Dropdown } from "./dropdown";
 
 interface CourseFilterProps {
-  subjects: string[];
-  professors: string[];
-  selectedSubjects: string[];
-  selectedProfessors: string[];
-  setSelectedSubjects: (subjects: string[]) => void;
-  setSelectedProfessors: (professors: string[]) => void;
+  subjects: Subject[];
+  professors: Professor[];
+  selectedSubjects: Subject[];
+  selectedProfessors: Professor[];
+  setSelectedSubjects: (subjects: Subject[]) => void;
+  setSelectedProfessors: (professors: Professor[]) => void;
 }
 
 export default function CourseFilters(props: CourseFilterProps) {
@@ -25,29 +25,23 @@ export default function CourseFilters(props: CourseFilterProps) {
   return (
     <div className="flex flex-col gap-4 p-4">
       <Dropdown
-        options={subjects.map((subject, index) => ({
-          value: index.toString(),
-          label: subject,
-        }))}
+        options={subjects}
+        selectedOptions={selectedSubjects}
+        setSelectedOptions={setSelectedSubjects}
         placeholder="Select subjects..."
         searchPlaceholder="Search subjects..."
         emptyMessage="No subjects found"
-        value={selectedSubjects}
-        setValue={setSelectedSubjects}
-        onChange={setSelectedSubjects}
+        type="subject"
       />
 
       <Dropdown
-        options={professors.map((prof, index) => ({
-          value: index.toString(),
-          label: prof,
-        }))}
+        options={professors}
+        selectedOptions={selectedProfessors}
+        setSelectedOptions={setSelectedProfessors}
         placeholder="Select professors..."
         searchPlaceholder="Search professors..."
         emptyMessage="No professors found"
-        value={selectedProfessors}
-        setValue={setSelectedProfessors}
-        onChange={setSelectedProfessors}
+        type="professor"
       />
     </div>
   );
