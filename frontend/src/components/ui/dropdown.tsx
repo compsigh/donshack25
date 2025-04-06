@@ -68,7 +68,7 @@ export function Dropdown(props: DropdownProps) {
                     key={i}
                     className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium whitespace-nowrap"
                   >
-                    {options.find((option) => option.value === val)?.label}
+                    {options.find((option) => option.label === val)?.label}
                   </div>
                 ))}
                 {value.length > 3 && (
@@ -96,7 +96,7 @@ export function Dropdown(props: DropdownProps) {
                     key={option.value}
                     value={option.value}
                     onSelect={() => {
-                      handleSetValue(option.value);
+                      handleSetValue(option.label);
                     }}
                   >
                     <Check

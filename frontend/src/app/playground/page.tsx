@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useCallback, useEffect } from "react";
 import {
@@ -19,10 +19,12 @@ import { getAllSubjects } from "@/functions/db/subject";
 import { getAllProfessors } from "@/functions/db/professor";
 
 export default function App() {
+  const [isMounted, setIsMounted] = useState(false);
+  const [initialNodes, setInitialNodes] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [professors, setProfessors] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]); 
+  const [selectedProfessors, setSelectedProfessors] = useState<string[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
   const nodeWidth = 172;
@@ -90,6 +92,16 @@ export default function App() {
   );
 
   const loadCourseData = async () => {
+    const subjects = await getAllSubjects();
+    setSubjects(
+      subjects.map((subject) => `${subject.code} - ${subject.name}`)
+    );
+
+    const professors = await getAllProfessors();
+    setProfessors(
+      professors.map((prof) => `${prof.firstName} ${prof.lastName}`)
+    );
+
     const courses = await getAllCourses();
 
     const courseNodes = courses.map((course) => ({
@@ -115,21 +127,50 @@ export default function App() {
         style: { stroke: "#ff0072" },
       }))
     );
+    setInitialNodes(courseNodes);
 
-    const layout = getLayoutedElements(courseNodes, courseEdges) as any;
+    const layout = getLayoutedElements(
+      courseNodes,
+      courseEdges
+    ) as any;
     setNodes(layout.nodes);
     setEdges(layout.edges);
+  };
 
+  const filterNodes = (nodes: any[]) => {
+    if (selectedSubjects.length === 0 && selectedProfessors.length === 0) {
+      return initialNodes;
+    }
 
-    const subjects = await getAllSubjects();
-    console.log("Subjects: ", subjects);
-    setSubjects(subjects.map((subject) => `(${subject.code} - ${subject.name})`));
-
-    const professors = await getAllProfessors();
-    setProfessors(
-      professors.map((prof) => `${prof.firstName} ${prof.lastName}`)
+    const validSubject = (subject: any) => {
+      return selectedSubjects.includes(`${subject.code} - ${subject.name}`);
+    };
+    const validProfessor = (professor: any) => {
+      return selectedProfessors.includes(`${professor.firstName} ${professor.lastName}`);
+    };
+    return nodes.filter(
+      (node) => {
+        console.log("selectedSubjects: ", selectedSubjects);
+        console.log("node.data.subject.code: ", node.data.subject.code);
+        console.log("node.data.subject.name: ", node.data.subject.name);
+        console.log("node.data.subject.code - node.data.subject.name: ", `${node.data.subject.code} - ${node.data.subject.name}`);
+        console.log("selectedSubjects.includes(node.data.subject.code - node.data.subject.name): ", selectedSubjects.includes(`${node.data.subject.code} - ${node.data.subject.name}`));
+        return selectedSubjects.includes(`${node.data.subject.code} - ${node.data.subject.name}`);
+      }
     );
   };
+
+  useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true);
+      return;
+    }
+    console.log("nodes: ", nodes);
+    console.log("filtered nodes: ", filterNodes(nodes));
+    const layout = getLayoutedElements(filterNodes(nodes), edges) as any;
+    setNodes(layout.nodes);
+    setEdges(layout.edges);
+  }, [selectedSubjects, selectedProfessors]);
 
   useEffect(() => {
     loadCourseData();
