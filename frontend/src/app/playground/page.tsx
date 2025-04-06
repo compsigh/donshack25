@@ -1,6 +1,5 @@
-"use client";
+"use client"
 
-import React, { useCallback, useEffect, useState } from "react";
 import {
   Background,
   ReactFlow,
@@ -67,7 +66,7 @@ export default function App() {
 
     return { nodes: newNodes, edges };
   };
-  
+
   // Set initial state
   const layoutedElements = getLayoutedElements([], []) || {
     nodes: [],
