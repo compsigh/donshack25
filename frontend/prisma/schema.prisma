@@ -10,15 +10,12 @@ datasource db {
 model Course {
   id          Int    @id @default(autoincrement())
   name        String
-  description String
-  credits     Int
 
-  subjectId Int
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectCode String
+  subject     Subject @relation(fields: [subjectCode], references: [code])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  takenBy   User[]   @relation("UserCourses")
 
   // Link to root of its prerequisite logic tree
   prerequisites   Expression? @relation("CoursePrerequisites", fields: [prerequisitesId], references: [id])
@@ -29,19 +26,11 @@ model Course {
 }
 
 model Subject {
-  id        Int      @id @default(autoincrement())
+  code      String   @id
   name      String
-  code      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   courses   Course[]
-}
-
-model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  coursesTaken Course[] @relation("UserCourses")
 }
 
 enum ExprType {

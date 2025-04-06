@@ -16,51 +16,44 @@ export async function getAllCourses() {
 
 export async function createOrGetExistingCourse(
   name: string,
-  description: string,
-  credits: number,
-  subjectId: number,
+  subjectCode: string,
   prerequisiteIds: number[],
   prerequisiteForIds: number[]
 ): Promise<Course> {
   const existingCourse = await prisma.course.findFirst({
     where: {
       name,
-      description,
-      credits,
-      subjectId,
+      subjectCode
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
+      Expression: true
     }
   })
 
   // If it exists already.... return it
-  if (existingCourse?.name === name &&
-    existingCourse.description === description &&
-    existingCourse.credits === credits &&
-    existingCourse.subjectId === subjectId)
-  {
+  if (
+    existingCourse?.name === name &&
+    existingCourse.subjectCode === subjectCode
+  ) {
     return existingCourse
   }
 
   const course = await prisma.course.create({
     data: {
       name: name.trim(),
-      description: description.trim(),
-      credits,
       subject: {
         connect: {
-          id: subjectId,
-        },
-      },
+          code: subjectCode
+        }
+      }
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
-    },
+      Expression: true
+    }
   })
   return course
 }
@@ -68,11 +61,9 @@ export async function createOrGetExistingCourse(
 export async function updateCourse(
   id: number,
   name: string,
-  description: string,
-  credits: number,
-  subjectId: number,
+  subjectCode: string,
   prerequisiteIds: number[],
-  prerequisiteForIds: number[],
+  prerequisiteForIds: number[]
 ): Promise<Course> {
   // First disconnect existing relationships if new IDs are provided
   // if (prerequisiteIds || prerequisiteForIds) {
@@ -102,29 +93,27 @@ export async function updateCourse(
     where: { id },
     data: {
       ...(name && { name: name.trim() }),
-      ...(description && { description: description.trim() }),
-      ...(credits && { credits }),
-      ...(subjectId && { subjectId }),
+      ...(subjectCode && { subjectCode }),
       ...(prerequisiteIds?.length
         ? {
             Prerequisites: {
-              connect: prerequisiteIds.map((id) => ({ id })),
-            },
+              connect: prerequisiteIds.map((id) => ({ id }))
+            }
           }
         : {}),
       ...(prerequisiteForIds?.length
         ? {
             prerequisiteOf: {
-              connect: prerequisiteForIds.map((id) => ({ id })),
-            },
+              connect: prerequisiteForIds.map((id) => ({ id }))
+            }
           }
-        : {}),
+        : {})
     },
     include: {
       subject: true,
       prerequisites: true,
-      Expression: true,
-    },
+      Expression: true
+    }
   })
 
   return updatedCourse

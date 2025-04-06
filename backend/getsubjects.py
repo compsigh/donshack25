@@ -550,7 +550,7 @@ def string_to_json(input_string):
         return json_data
     except json.JSONDecodeError as e:
         return {"error": "Invalid JSON string", "details": str(e)}
-    
+
 def get_subjects():
     """
     This function retrieves the subjects from the global variable RAW_STRING.
@@ -571,5 +571,5 @@ def get_subject_dict():
 
 # Example usage
 if __name__ == "__main__":
-    result = string_to_json(RAW_STRING)
-    print(result)
+    for subject in subject_generator():
+        print(subject)

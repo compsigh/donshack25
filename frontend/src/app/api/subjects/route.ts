@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
-import { createOrGetExistingSubject, getAllSubjects } from "@/functions/db/subject"
+import {
+  createOrGetExistingSubject,
+  getAllSubjects
+} from "@/functions/db/subject"
 
 export async function GET() {
   try {
     const subjects = await getAllSubjects()
     return NextResponse.json(subjects)
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error fetching professors:", error)
     return NextResponse.json(
       { error: "Failed to fetch professors" },
@@ -28,9 +30,7 @@ export async function POST(request: Request) {
 
     const subject = await createOrGetExistingSubject(name, code)
     return NextResponse.json(subject)
-  }
-
-  catch (error) {
+  } catch (error) {
     console.error("Error creating subject:", error)
     return NextResponse.json(
       { error: "Failed to create subject" },
