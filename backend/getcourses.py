@@ -179,16 +179,21 @@ async def fetch_course_detail(
     """
     Asynchronously fetch detailed information about a specific course using subject code and course number.
     """
-    url = f"https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/searchResults/{detail}"
+    url = f"https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/courseSearchResults/{detail}"
     headers = {
+        # ":authority": "reg-prod.ec.usfca.edu",
+        # ":method": "POST",
+        # ":path": f"/StudentRegistrationSsb/ssb/courseSearchResults/{detail}",
+        # ":scheme": "https",
         "accept": "text/html, */*; q=0.01",
         "accept-encoding": "gzip, deflate, br, zstd",
         "accept-language": "en-US,en;q=0.9",
-        "content-length": "51",
+        "content-length": "43",
         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "cookie": cookie,
         "origin": "https://reg-prod.ec.usfca.edu",
         "priority": "u=1, i",
-        "referer": "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/classSearch/classSearch",
+        "referer": "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/courseSearch/courseSearch",
         "sec-ch-ua": '"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"',
         "sec-ch-ua-mobile": "?0",
         "sec-ch-ua-platform": '"Linux"',
@@ -198,13 +203,11 @@ async def fetch_course_detail(
         "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
         "x-requested-with": "XMLHttpRequest",
         "x-synchronizer-token": synchronizer_token,
-        "cookie": cookie,
     }
     data = {
         "term": term,
         "subjectCode": subject_code,
         "courseNumber": course_number,
-        "first": "first",
     }
 
     async with session.post(url, headers=headers, data=data) as response:
@@ -218,15 +221,8 @@ async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_c
     """
     async with aiohttp.ClientSession() as session:
         endpoints = [
-            "getCourseCatalogDetails",
-            "getFees",
-            "getCourseDescription",
-            "getSyllabus",
-            "getCourseAttributes",
-            "getRestrictions",
             "getCorequisites",
             "getPrerequisites",
-            "getCourseMutuallyExclusions",
         ]
 
         tasks = []
@@ -298,20 +294,20 @@ def fetch_and_save_course_details():
 
     term = "202540"  # Term for Fall 2025
 
-
-    # Fetch all course data
-    all_courses = asyncio.run(
-        get_all_course_data_async(unique_session_id, synchronizer_token, cookie)
-    )
-    if not all_courses:
-        print("Failed to fetch course data.")
-        return None
-
-    # Save the initial course data to a file
-    with open("all_course_data.json", "w") as f:
-        json.dump(all_courses, f, indent=4)
-
-    # Fetch detailed course data
+    # # Fetch all course data
+    # all_courses = asyncio.run(
+    #         get_all_course_data_async(unique_session_id, synchronizer_token, cookie)
+    #     )
+    #     if not all_courses:
+    #         print("Failed to fetch course data.")
+    #         return None
+    #     # Save the fetched course data to a file
+    #     with open("all_course_data.json", "w") as f:
+    #         json.dump(all_courses, f, indent=4)
+    with open("all_course_data.json", "r") as f:
+        all_courses = json.load(f)
+    print("Loaded course data from file.")
+        
     asyncio.run(
         fetch_all_course_details_async(synchronizer_token, cookie, term, all_courses)
     )
