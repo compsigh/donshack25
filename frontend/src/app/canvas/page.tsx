@@ -31,12 +31,12 @@ interface LogicNodeProps {
 const LogicNode = ({ data }: LogicNodeProps) => {
     const { type, courses } = data;
     // Determine styling based on node type
-    const headerBgColor = type === 'AND' ? 'bg-blue-600' : 'bg-orange-600';
-    const bodyBgColor = type === 'AND' ? 'bg-blue-100' : 'bg-orange-100';
-    const borderColor = type === 'AND' ? 'border-blue-600' : 'border-orange-600';
+    const headerBgColor = 'bg-[#A99C7E]';
+    const bodyBgColor = 'bg-[#F0E7D2]';
+    const borderColor = 'border-[#A99C7E]';
     
     return (
-      <div className={`rounded-md shadow-md overflow-hidden border-2 ${borderColor} w-64`}>
+      <div className={`shadow-md overflow-hidden border-2 ${borderColor} w-64`}>
         {/* Header with node type */}
         <div className={`${headerBgColor} text-white font-bold py-2 px-4 text-center`}>
           {type === 'AND' ? 'All Required' : 'Any One Required'}
