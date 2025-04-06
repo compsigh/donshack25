@@ -1,0 +1,163 @@
+{
+  "method": "Network.requestWillBeSentExtraInfo",
+  "params": {
+    "associatedCookies": [
+      {
+        "blockedReasons": [
+          "NotOnPath",
+          "DomainMismatch"
+        ],
+        "cookie": {
+          "domain": "generalssb-prod.ec.usfca.edu",
+          "expires": -1,
+          "httpOnly": true,
+          "name": "JSESSIONID",
+          "path": "/BannerExtensibility",
+          "priority": "Medium",
+          "sameParty": false,
+          "sameSite": "None",
+          "secure": true,
+          "session": true,
+          "size": 42,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "FC76E102164FECDCF51D70C24DFC6BEE"
+        },
+        "exemptionReason": "None"
+      },
+      {
+        "blockedReasons": [
+          "DomainMismatch"
+        ],
+        "cookie": {
+          "domain": "generalssb-prod.ec.usfca.edu",
+          "expires": 1744506018.859888,
+          "httpOnly": false,
+          "name": "AWSALB",
+          "path": "/",
+          "priority": "Medium",
+          "sameParty": false,
+          "secure": false,
+          "session": false,
+          "size": 130,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "qkjfT+Re5I6O+W70ONZ2B1ufHQfdPtdK2J5mh+5jWfRAhbCKUcfrcgRYsIz8U71dOFtH8SPESJJVSksdAGm2QKlqDp75kKU560vmedi/uzxXc7+icANKk6IXtw8R"
+        },
+        "exemptionReason": "None"
+      },
+      {
+        "blockedReasons": [
+          "DomainMismatch"
+        ],
+        "cookie": {
+          "domain": "generalssb-prod.ec.usfca.edu",
+          "expires": 1744506018.860319,
+          "httpOnly": false,
+          "name": "AWSALBCORS",
+          "path": "/",
+          "priority": "Medium",
+          "sameParty": false,
+          "sameSite": "None",
+          "secure": true,
+          "session": false,
+          "size": 134,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "qkjfT+Re5I6O+W70ONZ2B1ufHQfdPtdK2J5mh+5jWfRAhbCKUcfrcgRYsIz8U71dOFtH8SPESJJVSksdAGm2QKlqDp75kKU560vmedi/uzxXc7+icANKk6IXtw8R"
+        },
+        "exemptionReason": "None"
+      },
+      {
+        "blockedReasons": [],
+        "cookie": {
+          "domain": "reg-prod.ec.usfca.edu",
+          "expires": -1,
+          "httpOnly": true,
+          "name": "JSESSIONID",
+          "path": "/StudentRegistrationSsb",
+          "priority": "Medium",
+          "sameParty": false,
+          "sameSite": "None",
+          "secure": true,
+          "session": true,
+          "size": 42,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "74D232D97811127C0B9D263454260D0A"
+        },
+        "exemptionReason": "None"
+      },
+      {
+        "blockedReasons": [],
+        "cookie": {
+          "domain": "reg-prod.ec.usfca.edu",
+          "expires": 1744506019.42267,
+          "httpOnly": false,
+          "name": "AWSALB",
+          "path": "/",
+          "priority": "Medium",
+          "sameParty": false,
+          "secure": false,
+          "session": false,
+          "size": 130,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "CYcfjakLlmvwzm6d6V0kY+BeSTZFFfCXp9vC9AHFWYrW/e4pLdbwWP/Yu1FiWvbzpt0YhhU2GaDzQWswpYUppt6/0h+lmkKsSKvYrEgt72TqOI9pogtXMf+5CQrZ"
+        },
+        "exemptionReason": "None"
+      },
+      {
+        "blockedReasons": [],
+        "cookie": {
+          "domain": "reg-prod.ec.usfca.edu",
+          "expires": 1744506019.423087,
+          "httpOnly": false,
+          "name": "AWSALBCORS",
+          "path": "/",
+          "priority": "Medium",
+          "sameParty": false,
+          "sameSite": "None",
+          "secure": true,
+          "session": false,
+          "size": 134,
+          "sourcePort": 443,
+          "sourceScheme": "Secure",
+          "value": "CYcfjakLlmvwzm6d6V0kY+BeSTZFFfCXp9vC9AHFWYrW/e4pLdbwWP/Yu1FiWvbzpt0YhhU2GaDzQWswpYUppt6/0h+lmkKsSKvYrEgt72TqOI9pogtXMf+5CQrZ"
+        },
+        "exemptionReason": "None"
+      }
+    ],
+    "clientSecurityState": {
+      "initiatorIPAddressSpace": "Public",
+      "initiatorIsSecureContext": true,
+      "privateNetworkRequestPolicy": "PreflightWarn"
+    },
+    "connectTiming": {
+      "requestTime": 40801.929944
+    },
+    "headers": {
+      ":authority": "reg-prod.ec.usfca.edu",
+      ":method": "GET",
+      ":path": "/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_term=202540&startDatepicker=&endDatepicker=&uniqueSessionId=vmzoh1743901216457&pageOffset=0&pageMaxSize=10&sortColumn=subjectDescription&sortDirection=asc",
+      ":scheme": "https",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "accept-encoding": "gzip, deflate, br, zstd",
+      "accept-language": "en-US,en;q=0.9",
+      "cookie": "JSESSIONID=74D232D97811127C0B9D263454260D0A; AWSALB=CYcfjakLlmvwzm6d6V0kY+BeSTZFFfCXp9vC9AHFWYrW/e4pLdbwWP/Yu1FiWvbzpt0YhhU2GaDzQWswpYUppt6/0h+lmkKsSKvYrEgt72TqOI9pogtXMf+5CQrZ; AWSALBCORS=CYcfjakLlmvwzm6d6V0kY+BeSTZFFfCXp9vC9AHFWYrW/e4pLdbwWP/Yu1FiWvbzpt0YhhU2GaDzQWswpYUppt6/0h+lmkKsSKvYrEgt72TqOI9pogtXMf+5CQrZ",
+      "priority": "u=1, i",
+      "referer": "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/classSearch/classSearch",
+      "sec-ch-ua": "\"Chromium\";v=\"135\", \"Not-A.Brand\";v=\"8\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/135.0.0.0 Safari/537.36",
+      "x-requested-with": "XMLHttpRequest",
+      "x-synchronizer-token": "5b0ffeaf-f00e-4eec-9947-da2c7caafb6c"
+    },
+    "requestId": "130922.150",
+    "siteHasCookieInOtherPartition": false
+  }
+}
