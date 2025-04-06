@@ -58,27 +58,33 @@ export function Dropdown(props: DropdownProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[480px] justify-between"
+          className="w-64 justify-between"
         >
-          <div className="flex gap-2 justify-start">
-            {value?.length
-              ? value.map((val, i) => (
+          <div className="flex gap-2 justify-start overflow-hidden">
+            {value?.length ? (
+              <>
+                {value.slice(0, 3).map((val, i) => (
                   <div
                     key={i}
-                    className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium"
+                    className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium whitespace-nowrap"
                   >
-                    {
-                      options.find((option) => option.value === val)
-                        ?.label
-                    }
+                    {options.find((option) => option.value === val)?.label}
                   </div>
-                ))
-              : placeholder}
+                ))}
+                {value.length > 3 && (
+                  <div className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium">
+                    +{value.length - 3} more
+                  </div>
+                )}
+              </>
+            ) : (
+              placeholder
+            )}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-64 p-0">
         <Command>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandEmpty>{emptyMessage}</CommandEmpty>
