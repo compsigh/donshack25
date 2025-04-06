@@ -1,7 +1,7 @@
-import os
 import re
 import json
-import requests
+import asyncio
+import aiohttp
 import time  # Import the time module
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -96,10 +96,9 @@ def get_tokens_and_cookie():
         print(f"get_tokens_and_cookie took {end_time - start_time:.2f} seconds")
 
 
-import asyncio
-import aiohttp
-
-async def fetch_course_data(session, unique_session_id, synchronizer_token, cookie, offset, page_max_size):
+async def fetch_course_data(
+    session, unique_session_id, synchronizer_token, cookie, offset, page_max_size
+):
     """
     Asynchronously fetch course data for a specific offset.
     """
@@ -132,10 +131,11 @@ async def fetch_course_data(session, unique_session_id, synchronizer_token, cook
         "sortDirection": "asc",
     }
 
-    url = "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/searchResults/searchResults"
+    url = "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/courseSearchResults/courseSearchResults"
     async with session.get(url, headers=headers, params=params) as response:
         response.raise_for_status()
         return await response.json()
+
 
 async def get_all_course_data_async(unique_session_id, synchronizer_token, cookie):
     """
@@ -143,7 +143,9 @@ async def get_all_course_data_async(unique_session_id, synchronizer_token, cooki
     """
     async with aiohttp.ClientSession() as session:
         # Fetch the first page to determine total entries
-        initial_response = await fetch_course_data(session, unique_session_id, synchronizer_token, cookie, 0, 1)
+        initial_response = await fetch_course_data(
+            session, unique_session_id, synchronizer_token, cookie, 0, 1
+        )
         total_entries = initial_response.get("totalCount", 0)
         print(f"Total entries found: {total_entries}")
 
@@ -153,7 +155,14 @@ async def get_all_course_data_async(unique_session_id, synchronizer_token, cooki
 
         # Create tasks for remaining pages
         tasks = [
-            fetch_course_data(session, unique_session_id, synchronizer_token, cookie, offset, page_max_size)
+            fetch_course_data(
+                session,
+                unique_session_id,
+                synchronizer_token,
+                cookie,
+                offset,
+                page_max_size,
+            )
             for offset in range(1, total_entries, page_max_size)
         ]
 
@@ -163,10 +172,13 @@ async def get_all_course_data_async(unique_session_id, synchronizer_token, cooki
             all_courses.extend(response.get("data", []))
 
         return all_courses
-    
-async def fetch_course_detail(session, synchronizer_token, cookie, term, course_reference_number, detail):
+
+
+async def fetch_course_detail(
+    session, synchronizer_token, cookie, term, subject_code, course_number, detail
+):
     """
-    Asynchronously fetch detailed information about a specific course.
+    Asynchronously fetch detailed information about a specific course using subject code and course number.
     """
     url = f"https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/searchResults/{detail}"
     headers = {
@@ -191,7 +203,8 @@ async def fetch_course_detail(session, synchronizer_token, cookie, term, course_
     }
     data = {
         "term": term,
-        "courseReferenceNumber": course_reference_number,
+        "subjectCode": subject_code,
+        "courseNumber": course_number,
         "first": "first",
     }
 
@@ -199,38 +212,41 @@ async def fetch_course_detail(session, synchronizer_token, cookie, term, course_
         response.raise_for_status()
         return await response.text()
 
+
 async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_courses):
     """
-    Asynchronously fetch all course details for each course.
+    Asynchronously fetch all course details for each course using updated endpoints.
     """
     async with aiohttp.ClientSession() as session:
         endpoints = [
-            "getClassDetails",
+            "getCourseCatalogDetails",
             "getFees",
-            "getSectionBookstoreDetails",
             "getCourseDescription",
             "getSyllabus",
-            "getSectionAttributes",
+            "getCourseAttributes",
             "getRestrictions",
-            "getEnrollmentInfo",
             "getCorequisites",
-            "getSectionPrerequisites",
+            "getPrerequisites",
             "getCourseMutuallyExclusions",
-            "getXlstSections",
-            "getLinkedSections",
-            "getSectionCatalogDetails",
         ]
 
         tasks = []
         for course in all_courses:
-            course_reference_number = course.get("courseReferenceNumber")
-            if not course_reference_number:
-                continue  # Skip if no course reference number is available
+            subject_code = course.get("subject")
+            course_number = course.get("courseNumber")
+            if not subject_code or not course_number:
+                continue  # Skip if subject code or course number is missing
 
             for endpoint in endpoints:
                 tasks.append(
                     fetch_course_detail(
-                        session, synchronizer_token, cookie, term, course_reference_number, endpoint
+                        session,
+                        synchronizer_token,
+                        cookie,
+                        term,
+                        subject_code,
+                        course_number,
+                        endpoint,
                     )
                 )
 
@@ -244,13 +260,16 @@ async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_c
         # Map responses back to courses
         task_index = 0
         for course in all_courses:
-            course_reference_number = course.get("courseReferenceNumber")
-            if not course_reference_number:
+            subject_code = course.get("subject")
+            course_number = course.get("courseNumber")
+            if not subject_code or not course_number:
                 continue
 
             for endpoint in endpoints:
                 if task_index >= len(responses):
-                    print(f"Index {task_index} is out of bounds for responses of length {len(responses)}")
+                    print(
+                        f"Index {task_index} is out of bounds for responses of length {len(responses)}"
+                    )
                     continue  # Skip if index is out of bounds
 
                 response = responses[task_index]
@@ -258,33 +277,56 @@ async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_c
 
                 if isinstance(response, Exception):
                     # Log the error and set the field to None
-                    print(f"Failed to fetch {endpoint} for CRN {course_reference_number}: {response}")
+                    print(
+                        f"Failed to fetch {endpoint} for {subject_code} {course_number}: {response}"
+                    )
                     course[endpoint] = None
                 else:
                     # Add the successful response to the course
                     course[endpoint] = response
-                    
-                    
-if __name__ == "__main__":
-    start_time = time.time()  # Start timing the main program
+
+
+def fetch_and_save_course_details():
+    """
+    Main function to fetch and save course details.
+    """
     unique_session_id, synchronizer_token, cookie = get_tokens_and_cookie()
-
-    if unique_session_id and synchronizer_token and cookie:
-        # Fetch all course data asynchronously
-        all_course_data = asyncio.run(get_all_course_data_async(unique_session_id, synchronizer_token, cookie))
-        # with open("all_course_data.json", "r", encoding="utf-8") as f:
-        #     all_course_data = json.load(f)
-
-        # Fetch all course details asynchronously
-        asyncio.run(fetch_all_course_details_async(synchronizer_token, cookie, "202540", all_course_data))
-
-        # Save the JSON response to a file
-        with open("all_course_data_with_details.json", "w", encoding="utf-8") as f:
-            json.dump(all_course_data, f, indent=2)
-
-        print("All course data saved to all_course_data.json")
-    else:
+    if not all([unique_session_id, synchronizer_token, cookie]):
         print("Failed to retrieve tokens and cookie.")
+        return None
 
-    end_time = time.time()  # End timing the main program
-    print(f"Program execution took {end_time - start_time:.2f} seconds")
+    term = "202540"  # Term for Fall 2025
+
+    # Fetch all course data
+    all_courses = asyncio.run(
+        get_all_course_data_async(unique_session_id, synchronizer_token, cookie)
+    )
+    if not all_courses:
+        print("Failed to fetch course data.")
+        return None
+
+    # Save the initial course data to a file
+    with open("all_course_data.json", "w") as f:
+        json.dump(all_courses, f, indent=4)
+
+    # Fetch detailed course data
+    asyncio.run(
+        fetch_all_course_details_async(synchronizer_token, cookie, term, all_courses)
+    )
+
+    # Save the detailed course data to a JSON file
+    output_file = "detailed_course_data.json"
+    with open(output_file, "w") as f:
+        json.dump(all_courses, f, indent=4)
+
+    print(f"Detailed course data saved to {output_file}")
+    return all_courses
+
+
+if __name__ == "__main__":
+    # Call the main function to fetch and save course details
+    detailed_course_data = fetch_and_save_course_details()
+    if detailed_course_data:
+        print("Course details fetched successfully.")
+    else:
+        print("Failed to fetch course details.")
