@@ -17,9 +17,9 @@ import { getAllCourses } from "@/functions/db/course";
 import CourseFilters from "@/components/ui/courseFilter";
 import { getAllSubjects } from "@/functions/db/subject";
 import { getAllProfessors } from "@/functions/db/professor";
-import { Professor, Subject } from "@prisma/client";
-import { useRouter } from "next/navigation";
+import { Professor, Subject, Course } from "@prisma/client";
 import { useAuth } from "@/components/AppContext";
+import { kMaxLength } from "buffer";
 
 export default function App() {
   const [isMounted, setIsMounted] = useState(false);
@@ -30,6 +30,7 @@ export default function App() {
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
   const [selectedProfessors, setSelectedProfessors] = useState<Professor[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  const [coursesTaken, setCoursesTaken] = useState<Course[]>([]);
   const { user } = useAuth();
 
   const nodeWidth = 172;
@@ -141,8 +142,14 @@ export default function App() {
       return initialNodes;
     }
     const resp = nodes.filter((node) => {
-      const subjectMatch =  selectedSubjects.filter((subject) => subject.id === node.data.subject.id).length > 0;
-      const professorMatch = selectedProfessors.filter((professor) => professor.id === node.data.professor.id).length > 0;
+      const subjectMatch =
+        selectedSubjects.filter(
+          (subject) => subject.id === node.data.subject.id
+        ).length > 0;
+      const professorMatch =
+        selectedProfessors.filter(
+          (professor) => professor.id === node.data.professor.id
+        ).length > 0;
       return subjectMatch || professorMatch;
     });
     return resp;
@@ -167,11 +174,66 @@ export default function App() {
     loadCourseData();
   }, []);
 
+  useEffect(() => {
+    // Create a new set of edges based on the current edges
+    const newEdges = edges.map(edge => ({
+      ...edge,
+      animated: true,
+      style: { stroke: "#ff0072" } // Reset to default style
+    }));
+
+    if (!coursesTaken.length) {
+      setEdges(newEdges);
+      return;
+    }
+
+    // Helper function to traverse the tree downwards and mark edges
+    const traverseAndMarkEdges = (
+      courseId: string,
+      visited = new Set<string>()
+    ) => {
+      if (visited.has(courseId)) return;
+      visited.add(courseId);
+
+      // Find all edges where this course is the target
+      const incomingEdges = edges.filter((edge) => edge.source === courseId);
+
+      incomingEdges.forEach((edge) => {
+        // Update the edge style
+        const edgeIndex = newEdges.findIndex((e) => e.id === edge.id);
+        if (edgeIndex !== -1) {
+          newEdges[edgeIndex] = {
+            ...edge,
+            animated: false,
+            style: { stroke: "#22C55E", strokeWidth: 2 }, // Green color for completed paths
+          };
+        }
+
+        // Recursively traverse to the source of this edge
+        traverseAndMarkEdges(edge.target, visited);
+      });
+    };
+
+    // Process each taken course
+    coursesTaken.forEach((course) => {
+      const courseId = nodes.find((node) => node.data === course)?.id;
+      if (courseId) {
+        traverseAndMarkEdges(courseId);
+      }
+    });
+
+    // Update the edges state with the new styles
+    setEdges(newEdges);
+  }, [coursesTaken]);
+
   return (
     <div className="w-full h-screen">
       <ReactFlowProvider>
         <Panel position="top-right">
           <CourseFilters
+            courses={nodes.map((node) => node.data)}
+            coursesTaken={coursesTaken}
+            setCoursesTaken={setCoursesTaken}
             subjects={subjects}
             professors={professors}
             selectedSubjects={selectedSubjects}

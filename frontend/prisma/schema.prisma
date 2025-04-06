@@ -16,17 +16,21 @@ model Course {
   professorId    Int
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+
   professor      Professor @relation(fields: [professorId], references: [id])
   subject        Subject   @relation(fields: [subjectId], references: [id])
-  prerequisite   Course[]  @relation("CourseToCourse")
-  prerequisiteOf Course[]  @relation("CourseToCourse")
   takenBy        User[]    @relation("UserCourses")
+
+  // Link to root of its prerequisite logic tree
+  prerequisite   Expression? @relation("CoursePrerequisites", fields: [prerequisiteId], references: [id])
+  prerequisiteId Int?
+
+  Expression Expression[]
 }
 
 model Professor {
   id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
+  name      String   @default("")
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,3 +52,24 @@ model User {
   email    String   @unique
   coursesTaken Course[] @relation("UserCourses")
 }
+
+model Expression {
+  id         Int           @id @default(autoincrement())
+  type       ExprType
+  courseId   Int?          // Only if type == COURSE
+  course     Course?       @relation(fields: [courseId], references: [id])
+  
+  parentId   Int?          // Points to parent expression
+  parent     Expression?   @relation("ParentChild", fields: [parentId], references: [id])
+  children   Expression[]  @relation("ParentChild")
+
+  // Optional: for grouping prerequisites by course
+  prerequisiteFor Course[] @relation("CoursePrerequisites")
+}
+
+enum ExprType {
+  AND
+  OR
+  COURSE
+}
+

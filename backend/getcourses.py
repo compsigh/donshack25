@@ -173,7 +173,6 @@ async def get_all_course_data_async(unique_session_id, synchronizer_token, cooki
 
         return all_courses
 
-
 async def fetch_course_detail(
     session, synchronizer_token, cookie, term, subject_code, course_number, detail
 ):
@@ -280,6 +279,7 @@ async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_c
                     print(
                         f"Failed to fetch {endpoint} for {subject_code} {course_number}: {response}"
                     )
+
                     course[endpoint] = None
                 else:
                     # Add the successful response to the course
@@ -290,12 +290,14 @@ def fetch_and_save_course_details():
     """
     Main function to fetch and save course details.
     """
+
     unique_session_id, synchronizer_token, cookie = get_tokens_and_cookie()
     if not all([unique_session_id, synchronizer_token, cookie]):
         print("Failed to retrieve tokens and cookie.")
         return None
 
     term = "202540"  # Term for Fall 2025
+
 
     # Fetch all course data
     all_courses = asyncio.run(

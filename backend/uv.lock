@@ -95,6 +95,7 @@ dependencies = [
     { name = "aiohttp" },
     { name = "bs4" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "ijson" },
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "requests" },
@@ -106,6 +107,7 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.11.16" },
     { name = "bs4", specifier = ">=0.0.2" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
+    { name = "ijson", specifier = ">=3.3.0" },
     { name = "pydantic", specifier = ">=2.11.2" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "requests", specifier = ">=2.32.3" },
@@ -351,6 +353,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442 },
 ]
+
+[[package]]
+name = "ijson"
+version = "3.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/83/28e9e93a3a61913e334e3a2e78ea9924bb9f9b1ac45898977f9d9dd6133f/ijson-3.3.0.tar.gz", hash = "sha256:7f172e6ba1bee0d4c8f8ebd639577bfe429dee0f3f96775a067b8bae4492d8a0", size = 60079 }
 
 [[package]]
 name = "jinja2"

@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Subject, Professor } from "@prisma/client";
+import { Subject, Professor, Course } from "@prisma/client";
 
-type Option = Subject | Professor;
+type Option = Subject | Professor | Course;
 
 interface DropdownProps {
   options: Option[];
@@ -28,18 +28,20 @@ interface DropdownProps {
   placeholder: string;
   searchPlaceholder: string;
   emptyMessage: string;
-  type: "subject" | "professor";
+  type: "subject" | "professor" | "course";
 }
 
 const getOptionLabel = (
   option: Option,
-  type: "subject" | "professor"
+  type: "subject" | "professor" | "course"
 ): string => {
   if (type === "subject") {
     return (option as Subject).name;
+  } else if (type === "course") {
+    return (option as any).label;
   } else {
     const prof = option as Professor;
-    return `${prof.firstName} ${prof.lastName}`;
+    return prof.name;
   }
 };
 
@@ -106,16 +108,22 @@ export function Dropdown(props: DropdownProps) {
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.id}
+                  key={index}
                   value={getOptionLabel(option, type)}
                   onSelect={() => handleSetValue(option)}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedOptions.find((opt) => opt.id === option.id)
+                      selectedOptions.find((opt) => {
+                        if (type === "course") {
+                          return opt === option;
+                        } else {
+                          opt.id === option.id;
+                        }
+                      })
                         ? "opacity-100"
                         : "opacity-0"
                     )}

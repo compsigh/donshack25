@@ -18,17 +18,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { firstName, lastName, email } = await request.json()
+    const { name, email } = await request.json()
 
-    if (!firstName?.trim()) {
+    if (!name?.trim()) {
       return NextResponse.json(
-        { error: "First name is required" },
-        { status: 400 }
-      )
-    }
-    if (!lastName?.trim()) {
-      return NextResponse.json(
-        { error: "Last name is required" },
+        { error: "Name is required" },
         { status: 400 }
       )
     }
@@ -47,8 +41,7 @@ export async function POST(request: Request) {
     }
 
     const professor = await createProfessor(
-      firstName.trim(),
-      lastName.trim(),
+      name.trim(),
       email.trim()
     )
     return NextResponse.json(professor)

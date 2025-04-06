@@ -30,8 +30,7 @@ curl http://localhost:3000/api/subjects
 curl -X POST http://localhost:3000/api/professors \
   -H "Content-Type: application/json" \
   -d '{
-    "firstName": "John",
-    "lastName": "Doe",
+    "name": "John Doe",
     "email": "john.doe@university.edu"
   }'
 ```
@@ -94,8 +93,7 @@ curl http://localhost:3000/api/courses
 ```json
 {
   "id": 1,
-  "firstName": "John",
-  "lastName": "Doe",
+  "name": "John Doe",
   "email": "john.doe@university.edu",
   "courses": [],
   "createdAt": "2024-04-04T10:00:00.000Z",
