@@ -19,8 +19,3 @@ wheels/
 # Misc
 .idea/
 .DS_Store
-
-#header and cookeis
-uniqueSessionId.txt
-X-Synchronizer-Token.txt
-cookie.txt
