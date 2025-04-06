@@ -37,7 +37,10 @@ const getOptionLabel = (
 ): string => {
   if (type === "subject") {
     return (option as Subject).name;
-  } else {
+  } else if (type === "course") {
+    return (option as any).label;
+  }
+  else {
     const prof = option as Professor;
     return prof.name;
   }
@@ -110,9 +113,9 @@ export function Dropdown(props: DropdownProps) {
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.id}
+                  key={index}
                   value={getOptionLabel(option, type)}
                   onSelect={() => handleSetValue(option)}
                 >
