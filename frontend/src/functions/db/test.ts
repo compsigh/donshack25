@@ -475,7 +475,7 @@ export async function test1() {
   }
 }
 
-export async function recursiveQuery(expressionId: number) {
+export async function recursiveQuery() {
   const recursiveInclude = (depth: number = 5): any => {
     if (depth <= 0) return true
     return {
@@ -489,8 +489,7 @@ export async function recursiveQuery(expressionId: number) {
     }
   }
 
-  const resp = await prisma.expression.findUnique({
-    where: { id: expressionId },
+  const resp = await prisma.expression.findMany({
     include: recursiveInclude()
   })
 
