@@ -8,13 +8,13 @@ export async function getAllSubjects() {
       courses: true
     },
     orderBy: {
-      createdAt: "desc"
+      name: "asc"
     }
   })
   return subjects
 }
 
-export async function createOrGetExistingSubject(name: string, code: string) {
+export async function getOrCreateSubject(code: string, name: string) {
   const existingSubject = await prisma.subject.findFirst({
     where: {
       name,
@@ -25,14 +25,14 @@ export async function createOrGetExistingSubject(name: string, code: string) {
     }
   })
 
-  if (existingSubject?.name === name && existingSubject.code === code) {
+  if (existingSubject) {
     return existingSubject
   }
 
   const subject = await prisma.subject.create({
     data: {
-      name,
-      code
+      code,
+      name
     },
     include: {
       courses: true

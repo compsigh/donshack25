@@ -20,12 +20,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const {
-      name,
-      subjectCode,
-      prerequisiteIds,
-      prerequisiteOfIds
-    } = await request.json()
+    const { name, subjectCode, prerequisiteIds, prerequisiteOfIds } =
+      await request.json()
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
@@ -55,13 +51,8 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const {
-      id,
-      name,
-      subjectCode,
-      prerequisiteIds,
-      prerequisiteOfIds
-    } = await request.json()
+    const { id, name, subjectCode, prerequisiteIds, prerequisiteOfIds } =
+      await request.json()
 
     if (!id) {
       return NextResponse.json(
