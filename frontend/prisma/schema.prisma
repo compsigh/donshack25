@@ -25,8 +25,7 @@ model Course {
 
 model Professor {
   id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
+  name      String   @default("")
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

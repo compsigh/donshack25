@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Subject, Professor } from "@prisma/client";
+import { Subject, Professor, Course } from "@prisma/client";
 
-type Option = Subject | Professor;
+type Option = Subject | Professor | Course;
 
 interface DropdownProps {
   options: Option[];
@@ -28,18 +28,18 @@ interface DropdownProps {
   placeholder: string;
   searchPlaceholder: string;
   emptyMessage: string;
-  type: "subject" | "professor";
+  type: "subject" | "professor" | "course";
 }
 
 const getOptionLabel = (
   option: Option,
-  type: "subject" | "professor"
+  type: "subject" | "professor" | "course"
 ): string => {
   if (type === "subject") {
     return (option as Subject).name;
   } else {
     const prof = option as Professor;
-    return `${prof.firstName} ${prof.lastName}`;
+    return prof.name;
   }
 };
 
@@ -63,6 +63,10 @@ export function Dropdown(props: DropdownProps) {
       setSelectedOptions([...selectedOptions, option]);
     }
   };
+
+  useEffect(() => {
+    console.log("options: ", options);
+  }, [options]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
