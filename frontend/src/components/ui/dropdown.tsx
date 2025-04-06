@@ -117,13 +117,7 @@ export function Dropdown(props: DropdownProps) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedOptions.find((opt) => {
-                        if (type === "course") {
-                          return opt === option
-                        } else {
-                          opt.createdAt === option.createdAt // might break something
-                        }
-                      })
+                      selectedOptions.find((opt) => opt.createdAt === option.createdAt)
                         ? "opacity-100"
                         : "opacity-0"
                     )}
