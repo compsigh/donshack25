@@ -96,22 +96,13 @@ def get_tokens_and_cookie():
         print(f"get_tokens_and_cookie took {end_time - start_time:.2f} seconds")
 
 
-def get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0, page_max_size=500):
-    """
-    Fetches course data from the USFCA registration API using the provided
-    tokens, cookie, and pagination parameters.
+import asyncio
+import aiohttp
 
-    Args:
-        unique_session_id (str): The unique session ID.
-        synchronizer_token (str): The X-Synchronizer-Token.
-        cookie (str): The session cookie.
-        page_offset (int): The offset for pagination.
-        page_max_size (int): The maximum number of results per page.
-
-    Returns:
-        dict: The JSON response from the API.
+async def fetch_course_data(session, unique_session_id, synchronizer_token, cookie, offset, page_max_size):
     """
-    start_time = time.time()  # Start timing
+    Asynchronously fetch course data for a specific offset.
+    """
     headers = {
         "Host": "reg-prod.ec.usfca.edu",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
@@ -131,10 +122,10 @@ def get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0
     }
 
     params = {
-        "txt_term": "202540",  # Changed term to Fall 2025
+        "txt_term": "202540",  # Term for Fall 2025
         "startDatepicker": "",
         "endDatepicker": "",
-        "pageOffset": str(page_offset),
+        "pageOffset": str(offset),
         "pageMaxSize": str(page_max_size),
         "uniqueSessionId": unique_session_id,
         "sortColumn": "subjectDescription",
@@ -142,67 +133,154 @@ def get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0
     }
 
     url = "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/searchResults/searchResults"
+    async with session.get(url, headers=headers, params=params) as response:
+        response.raise_for_status()
+        return await response.json()
 
-    response = requests.get(url, headers=headers, params=params)
-    response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-    end_time = time.time()  # End timing
-    print(f"get_course_data (offset={page_offset}, max={page_max_size}) took {end_time - start_time:.2f} seconds")
-    return response.json()
-
-
-def get_all_course_data(unique_session_id, synchronizer_token, cookie):
+async def get_all_course_data_async(unique_session_id, synchronizer_token, cookie):
     """
-    Fetches all course data by iterating through paginated results.
-
-    Args:
-        unique_session_id (str): The unique session ID.
-        synchronizer_token (str): The X-Synchronizer-Token.
-        cookie (str): The session cookie.
-
-    Returns:
-        list: A list of all course data entries.
+    Asynchronously fetch all course data by sending concurrent requests.
     """
-    start_time = time.time()  # Start timing
-    # Fetch the first page with a max size of 1 to determine total entries
-    initial_response = get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=0, page_max_size=1)
-    total_entries = initial_response.get("totalCount", 0)
-    print(f"Total entries found: {total_entries}")
+    async with aiohttp.ClientSession() as session:
+        # Fetch the first page to determine total entries
+        initial_response = await fetch_course_data(session, unique_session_id, synchronizer_token, cookie, 0, 1)
+        total_entries = initial_response.get("totalCount", 0)
+        print(f"Total entries found: {total_entries}")
 
-    # Start with the data from the initial response
-    all_courses = initial_response.get("data", [])
-    page_max_size = 500
+        # Start with the data from the initial response
+        all_courses = initial_response.get("data", [])
+        page_max_size = 500
 
-    # Iterate through the remaining pages
-    for offset in range(1, total_entries, page_max_size):
-        print(f"Fetching courses with offset {offset}...")
-        response = get_course_data(unique_session_id, synchronizer_token, cookie, page_offset=offset, page_max_size=page_max_size)
-        all_courses.extend(response.get("data", []))
+        # Create tasks for remaining pages
+        tasks = [
+            fetch_course_data(session, unique_session_id, synchronizer_token, cookie, offset, page_max_size)
+            for offset in range(1, total_entries, page_max_size)
+        ]
 
-    end_time = time.time()  # End timing
-    print(f"get_all_course_data took {end_time - start_time:.2f} seconds")
-    return all_courses
+        # Gather all results
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
+            all_courses.extend(response.get("data", []))
 
+        return all_courses
+    
+async def fetch_course_detail(session, synchronizer_token, cookie, term, course_reference_number, detail):
+    """
+    Asynchronously fetch detailed information about a specific course.
+    """
+    url = f"https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/searchResults/{detail}"
+    headers = {
+        "accept": "text/html, */*; q=0.01",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "content-length": "51",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "origin": "https://reg-prod.ec.usfca.edu",
+        "priority": "u=1, i",
+        "referer": "https://reg-prod.ec.usfca.edu/StudentRegistrationSsb/ssb/classSearch/classSearch",
+        "sec-ch-ua": '"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Linux"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+        "x-requested-with": "XMLHttpRequest",
+        "x-synchronizer-token": synchronizer_token,
+        "cookie": cookie,
+    }
+    data = {
+        "term": term,
+        "courseReferenceNumber": course_reference_number,
+        "first": "first",
+    }
 
+    async with session.post(url, headers=headers, data=data) as response:
+        response.raise_for_status()
+        return await response.text()
+
+async def fetch_all_course_details_async(synchronizer_token, cookie, term, all_courses):
+    """
+    Asynchronously fetch all course details for each course.
+    """
+    async with aiohttp.ClientSession() as session:
+        endpoints = [
+            "getClassDetails",
+            "getFees",
+            "getSectionBookstoreDetails",
+            "getCourseDescription",
+            "getSyllabus",
+            "getSectionAttributes",
+            "getRestrictions",
+            "getEnrollmentInfo",
+            "getCorequisites",
+            "getSectionPrerequisites",
+            "getCourseMutuallyExclusions",
+            "getXlstSections",
+            "getLinkedSections",
+            "getSectionCatalogDetails",
+        ]
+
+        tasks = []
+        for course in all_courses:
+            course_reference_number = course.get("courseReferenceNumber")
+            if not course_reference_number:
+                continue  # Skip if no course reference number is available
+
+            for endpoint in endpoints:
+                tasks.append(
+                    fetch_course_detail(
+                        session, synchronizer_token, cookie, term, course_reference_number, endpoint
+                    )
+                )
+
+        # Gather all results
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Debugging: Print the lengths of responses and tasks
+        print(f"Total tasks created: {len(tasks)}")
+        print(f"Total responses received: {len(responses)}")
+
+        # Map responses back to courses
+        task_index = 0
+        for course in all_courses:
+            course_reference_number = course.get("courseReferenceNumber")
+            if not course_reference_number:
+                continue
+
+            for endpoint in endpoints:
+                if task_index >= len(responses):
+                    print(f"Index {task_index} is out of bounds for responses of length {len(responses)}")
+                    continue  # Skip if index is out of bounds
+
+                response = responses[task_index]
+                task_index += 1
+
+                if isinstance(response, Exception):
+                    # Log the error and set the field to None
+                    print(f"Failed to fetch {endpoint} for CRN {course_reference_number}: {response}")
+                    course[endpoint] = None
+                else:
+                    # Add the successful response to the course
+                    course[endpoint] = response
+                    
+                    
 if __name__ == "__main__":
     start_time = time.time()  # Start timing the main program
-    # Get tokens and cookie using Selenium
     unique_session_id, synchronizer_token, cookie = get_tokens_and_cookie()
-    print("unique_session_id: " + unique_session_id)
-    print("synchronizer_token: " + synchronizer_token)
-    print("cookie: " + cookie)
 
     if unique_session_id and synchronizer_token and cookie:
-        # Fetch all course data using the tokens and cookie
-        all_course_data = get_all_course_data(unique_session_id, synchronizer_token, cookie)
-        print(f"Total number of courses retrieved: {len(all_course_data)}")
+        # Fetch all course data asynchronously
+        # all_course_data = asyncio.run(get_all_course_data_async(unique_session_id, synchronizer_token, cookie))
+        with open("all_course_data.json", "r", encoding="utf-8") as f:
+            all_course_data = json.load(f)
+
+        # Fetch all course details asynchronously
+        asyncio.run(fetch_all_course_details_async(synchronizer_token, cookie, "202540", all_course_data))
 
         # Save the JSON response to a file
-        with open("all_course_data.json", "w", encoding="utf-8") as f:
+        with open("all_course_data_with_details.json", "w", encoding="utf-8") as f:
             json.dump(all_course_data, f, indent=2)
-
-        # Calculate the size of the saved file in MB
-        file_size = os.path.getsize("all_course_data.json") / (1024 * 1024)
-        print(f"File size: {file_size:.2f} MB")
 
         print("All course data saved to all_course_data.json")
     else:
