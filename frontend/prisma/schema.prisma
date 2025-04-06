@@ -20,6 +20,7 @@ model Course {
   subject        Subject   @relation(fields: [subjectId], references: [id])
   prerequisite   Course[]  @relation("CourseToCourse")
   prerequisiteOf Course[]  @relation("CourseToCourse")
+  takenBy        User[]    @relation("UserCourses")
 }
 
 model Professor {
@@ -39,4 +40,11 @@ model Subject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   courses   Course[]
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  coursesTaken Course[] @relation("UserCourses")
 }
