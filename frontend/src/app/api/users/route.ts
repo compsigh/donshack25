@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { getUserByEmail } from "@/functions/db/user";
+import { getUserByEmailOrCreate } from "@/functions/db/user";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
+    const name = searchParams.get("name");
 
     if (!email) {
       return NextResponse.json(
@@ -13,8 +14,14 @@ export async function GET(request: Request) {
       );
     }
 
-   const user = await getUserByEmail(email);
-   console.log("user: ", user);
+    if (!name) {
+      return NextResponse.json(
+        { error: "Name is required" },
+        { status: 400 }
+      );
+    }
+
+   const user = await getUserByEmailOrCreate(email, name);
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },

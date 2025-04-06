@@ -30,12 +30,7 @@ export default function App() {
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
   const [selectedProfessors, setSelectedProfessors] = useState<Professor[]>([]);
   const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const { user } = useAuth();
 
   const nodeWidth = 172;
   const nodeHeight = 36;

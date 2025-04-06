@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const page = usePathname();
 
   const createOrGetUser = async (email: string | null | undefined) => {
-    const resp = await fetch(`/api/users?email=${email}`);
+    const resp = await fetch(`/api/users?email=${email}&name=${session?.user?.name}`);
     const data = await resp.json();
     if (resp.status === 200) {
       setUser(data);
@@ -36,10 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
     if (!user && session?.user) {
       createOrGetUser(session?.user?.email);
     }
-  }, []);
+  }, [session, status, user]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
